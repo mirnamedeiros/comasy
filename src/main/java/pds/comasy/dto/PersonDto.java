@@ -16,7 +16,7 @@ public class PersonDto {
 
     private Date birthday;
 
-    private List<String> proneNumber;
+    private List<String> phoneNumber;
 
     private String cnh;
 }

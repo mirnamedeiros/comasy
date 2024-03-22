@@ -10,7 +10,7 @@ public class PersonMapper {
             personDto.getCpf(),
             personDto.getName(),
             personDto.getBirthday(),
-            personDto.getProneNumber(),
+            personDto.getPhoneNumber(),
             personDto.getCnh()
         );
     }
