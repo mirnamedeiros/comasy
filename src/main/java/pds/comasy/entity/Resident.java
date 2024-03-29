@@ -28,5 +28,9 @@ public class Resident {
     @JoinColumn(name = "resident_id")
     private List<Person> dependents;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
     public Resident() {}
 }

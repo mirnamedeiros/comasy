@@ -3,6 +3,7 @@ package pds.comasy.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import pds.comasy.entity.Role;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class ResidentDto {
     private PersonDto person;
 
     private List<PersonDto> dependents;
+
+    private Role role;
 
     public ResidentDto() {}
 }

@@ -70,4 +70,13 @@ public class ResidentService {
 
         residentRepository.delete(resident);
     }
+
+//    private void validateRole(RoleDto roleDto) throws Exception {
+//        if (roleDto == null || roleDto.getId() == null) {
+//            throw new Exception("Role is required");
+//        }
+
+//         Implemente a lógica de validação necessária, por exemplo:
+//         Verificar se o papel é um dos papéis permitidos no sistema
+//    }
 }
