@@ -13,7 +13,8 @@ public class ResidentMapper {
     public static Resident mapToResident(ResidentDto residentDto) {
         Resident resident = new Resident();
         resident.setId(residentDto.getId());
-        resident.setApartmentNumber(resident.getApartmentNumber());
+        resident.setApartmentNumber(residentDto.getApartmentNumber());
+        resident.setRoleId(residentDto.getRole());
         resident.setPerson(PersonMapper.mapToPerson(residentDto.getPerson()));
 
         List<Person> dependents = new ArrayList<>();
@@ -31,6 +32,7 @@ public class ResidentMapper {
         ResidentDto residentDto = new ResidentDto();
         residentDto.setId(resident.getId());
         residentDto.setApartmentNumber(resident.getApartmentNumber());
+        residentDto.setRole(resident.getRoleId());
         residentDto.setPerson(PersonMapper.mapToPersonDto(resident.getPerson()));
 
         if(resident.getDependents() != null) {

@@ -20,7 +20,7 @@ public class ResidentDto {
 
     private List<PersonDto> dependents;
 
-    private Role role;
+    private Integer role;
 
     public ResidentDto() {}
 }

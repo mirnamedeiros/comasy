@@ -28,9 +28,8 @@ public class Resident {
     @JoinColumn(name = "resident_id")
     private List<Person> dependents;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @Column(name = "role_id")
+    private Integer roleId;
 
     public Resident() {}
 }
