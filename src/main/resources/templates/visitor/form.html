@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <title>Cadastro de Visitante</title>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Cadastro de Visitante</h1>
+
+    <form id="visitorForm" method="post" class="mb-5">
+
+        <div class="mb-3 form-group">
+            <label for="input-name">Nome</label>
+            <input type="text" class="form-control" id="input-name" name="person.name">
+        </div>
+
+        <div class="mb-3 form-group">
+            <label for="input-cpf">CPF</label>
+            <input type="text" class="form-control" id="input-cpf" name="person.cpf">
+        </div>
+
+        <div class="mb-3 form-group">
+            <label for="input-birthday">Data de Nascimento</label>
+            <input type="date" class="form-control" id="input-birthday" name="person.birthday">
+        </div>
+
+        <div class="mb-3" id="phone-inputs">
+            <label>Telefone(s)</label>
+        </div>
+        <button type="button" class="btn btn-primary mb-3" id="add-phone">Adicionar Telefone</button>
+
+        <div class="mb-3 form-group">
+            <label for="input-type-visitor">Tipo de Visitante</label>
+            <select class="form-select" id="input-type-visitor" name="typeVisitor">
+                <option th:each="type : ${types}" th:value="${type.id}" th:text="${type.name}"></option>
+            </select>
+        </div>
+
+        <button type="button" onclick="submitForm()" class="btn btn-primary">Cadastrar Visitante</button>
+    </form>
+</div>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/jquery/jquery.js}"></script>
+<script>
+    function submitForm() {
+        var form = $('#visitorForm')[0];
+        var formData = new FormData(form);
+        var visitorDto = {
+            person: {
+                phoneNumber: []
+            },
+            typeVisitor: null
+        };
+
+        formData.forEach(function (value, key) {
+            if (key.startsWith('person.')) {
+                var personKey = key.substring(7);
+                if (personKey === 'phoneNumber') {
+                    visitorDto.person.phoneNumber.push(value);
+                } else {
+                    visitorDto.person[personKey] = value;
+                }
+            } else if (key === 'typeVisitor') {
+                visitorDto.typeVisitor = value;
+            }
+        });
+
+        visitorDto.person.birthday = new Date(visitorDto.person.birthday);
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/api/visitor",
+            data: JSON.stringify(visitorDto),
+            dataType: 'json',
+            success: function (data) {
+                console.log('Visitor created successfully:', data);
+            },
+            error: function (error) {
+                console.error('Error creating visitor:', error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#add-phone").click(function () {
+            $("#phone-inputs").append('<div class="mb-3"><input type="text" name="person.phoneNumber" class="form-control mb-2 phone-input" placeholder="Telefone"><button type="button" class="btn btn-danger remove-phone">Remover Telefone</button></div>');
+        });
+
+        $(document).on("click", ".remove-phone", function () {
+            $(this).parent().remove();
+        });
+    });
+</script>
+</body>
+</html>
