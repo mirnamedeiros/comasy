@@ -12,6 +12,7 @@
         <div th:if="${visitor != null}">
             <img th:src="'data:image/png;base64,' + ${qrCodeImage}" alt="Visitor QR Code" class="img-fluid">
         </div>
+        <input type="hidden" id="qrCodeText" th:value="${qrCodeText}" />
         <div th:if="${visitor == null}">
             <p>O visitante não foi encontrado.</p>
         </div>
@@ -21,18 +22,20 @@
     <script>
         function verificarQRCode() {
 
-            var qrCodeText = /*[[${qrCodeText}]]*/ '';
+            var qrCodeText = $('#qrCodeText').val();
 
-
-            $.get('/api/visitor/verify/' + qrCodeText)
-                .done(function (response) {
-
+            $.ajax({
+                type: "POST",
+                url: "/api/visitor/verify",
+                data: JSON.stringify({ qrCodeText: qrCodeText }),
+                contentType: "application/json",
+                success: function (response) {
                     alert('Verificação do QR Code: ' + response.message);
-                })
-                .fail(function () {
-
+                },
+                error: function (error) {
                     alert('Erro ao verificar o QR Code.');
-                });
+                }
+            });
         }
     </script>
     </body>

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import pds.comasy.dto.VisitorDto;
 import pds.comasy.service.VisitorService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/visitor")
 public class VisitorController {
@@ -64,14 +67,18 @@ public class VisitorController {
         }
     }
 
-    @GetMapping("/verify/{qrCodeText}")
-    public ResponseEntity<String> verifyQRCode(@PathVariable String qrCodeText) {
-        boolean qrCodeExists = visitorService.verifyQRCode(qrCodeText);
+    @PostMapping("/verify")
+    public ResponseEntity<Map<String, String>> verifyQRCode(@RequestBody Map<String, String> requestBody) {
+        String qrCodeText = requestBody.get("qrCodeText");
+        boolean validQrCode = visitorService.verifyQRCode(qrCodeText);
 
-        if (qrCodeExists) {
-            return ResponseEntity.ok("QR Code válido");
+        Map<String, String> response = new HashMap<>();
+        if (validQrCode) {
+            response.put("message", "QR Code válido");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("QR Code inválido");
+            response.put("message", "QR Code inválido");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 }

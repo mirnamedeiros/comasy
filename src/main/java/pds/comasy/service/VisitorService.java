@@ -1,16 +1,14 @@
 package pds.comasy.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import pds.comasy.dto.PersonDto;
 import pds.comasy.dto.VisitorDto;
-import pds.comasy.entity.Person;
 import pds.comasy.entity.Visitor;
 import pds.comasy.mapper.VisitorMapper;
 import pds.comasy.repository.VisitorRepository;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
@@ -87,17 +85,18 @@ public class VisitorService {
             String personCpf = visitorDto.getPerson().getCpf();
 
             PersonDto person = personService.getPersonByCpf(personCpf);
-            if (personService.getPersonByCpf(personCpf)== null) {
+            if (personService.getPersonByCpf(personCpf) == null) {
                 return false;
             }
 
-            if (!person.getName().equals(visitorDto.getPerson().getName())
-                    || !person.getCpf().equals(visitorDto.getPerson().getCpf())
-                    || !person.getBirthday().equals(visitorDto.getPerson().getBirthday())) {
-                return false;
-            }
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String personBirthday = dateFormat.format(person.getBirthday());
+            String visitorBirthday = dateFormat.format(visitorDto.getPerson().getBirthday());
 
-            return true;
+            return person.getName().equals(visitorDto.getPerson().getName())
+                    && person.getCpf().equals(visitorDto.getPerson().getCpf())
+                    && personBirthday.equals(visitorBirthday);
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;

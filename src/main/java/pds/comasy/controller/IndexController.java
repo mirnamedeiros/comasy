@@ -72,7 +72,6 @@ public class IndexController {
             if (visitor != null) {
                 modelAndView.addObject("visitor", visitor);
 
-                // Gere o QR Code a partir do texto
                 byte[] qrCodeImage = qrCodeService.generateQRCode(visitor.getQrCode(), 200, 200);
                 String qrCodeImageData = Base64.getEncoder().encodeToString(qrCodeImage);
                 modelAndView.addObject("qrCodeImage", qrCodeImageData);
@@ -83,7 +82,6 @@ public class IndexController {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             modelAndView.addObject("visitor", null);
-            // Tratar exceção, se necessário
         }
 
         return modelAndView;
