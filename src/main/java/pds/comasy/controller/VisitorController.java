@@ -78,7 +78,7 @@ public class VisitorController {
             return ResponseEntity.ok(response);
         } else {
             response.put("message", "QR Code inválido");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.ok(response);
         }
     }
 }
