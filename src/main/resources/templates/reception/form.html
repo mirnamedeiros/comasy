@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Entrega</title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+</head>
+<body>
+<div class="container">
+    <h2>Cadastrar Nova Entrega</h2>
+    <form>
+        <div class="form-group">
+            <label for="resident">Residente:</label>
+            <select class="form-control" id="resident" name="residentId">
+                <option th:each="resident : ${residents}" th:value="${resident.id}" th:text="${resident.person.name}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="arrivalDate">Data de Chegada:</label>
+            <input type="date" class="form-control" id="arrivalDate" name="arrivalDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required>
+        </div>
+        <input type="hidden" name="delivered" value="false">
+        <button type="button" class="btn btn-primary" onclick="submitForm()">Cadastrar</button>
+    </form>
+</div>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/jquery/jquery.js}"></script>
+<script>
+    function submitForm() {
+        var formData = {
+            residentId: $('#resident').val(),
+            arrivalDate: $('#arrivalDate').val(),
+            delivered: false
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/reception/delivery',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function () {
+                console.log("Entrega Criada!");
+            },
+            error: function () {
+                console.error("Vixe!");
+            }
+        });
+    }
+</script>
+</body>
+</html>
