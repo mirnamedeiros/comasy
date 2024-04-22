@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <title>Lista de Condomínios</title>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Lista de Condomínios</h1>
+        <div class="mb-3 form-group">
+           <p>Lista</p>
+        </div>
+
+    <span th:text="{msg != null }"></span>
+</div>
+</body>
+</html>
