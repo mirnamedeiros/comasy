@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pds.comasy.entity.Delivery;
+import pds.comasy.entity.NotificationVisitor;
 import pds.comasy.service.ReceptionService;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -40,6 +43,21 @@ public class ReceptionController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    }
+
+    @GetMapping("/pending-deliveries")
+    public ResponseEntity<List<Delivery>> getPendingDeliveries() {
+        List<Delivery> pendingDeliveries = receptionService.getPendingDeliveries();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        pendingDeliveries.forEach(delivery -> {
+            LocalDate arrivalDate = delivery.getArrivalDate().toLocalDate();
+            String formattedDate = arrivalDate.format(formatter);
+            delivery.setFormattedArrivalDate(formattedDate);
+        });
+        if (pendingDeliveries.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(pendingDeliveries, HttpStatus.OK);
     }
 
     @GetMapping("/delivery/{id}")
@@ -69,6 +87,35 @@ public class ReceptionController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/notification")
+    public ResponseEntity<NotificationVisitor> createNotificationVisitor(@RequestBody NotificationVisitor notificationVisitor) {
+        try {
+            NotificationVisitor newNotificationVisitor = receptionService.createNotification(notificationVisitor);
+            return new ResponseEntity<>(newNotificationVisitor, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/pending-notifications")
+    public ResponseEntity<List<NotificationVisitor>> getPendingNotifications() {
+        List<NotificationVisitor> pendingNotifications = receptionService.getPendingNotifications();
+        if (pendingNotifications.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(pendingNotifications, HttpStatus.OK);
+    }
+
+    @PutMapping("/notification/{number}/authorize")
+    public ResponseEntity<NotificationVisitor> authorizeNotification(@PathVariable("number") Integer number) {
+        NotificationVisitor authorizedNotification = receptionService.authorizeNotification(number);
+        if (authorizedNotification != null) {
+            return new ResponseEntity<>(authorizedNotification, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

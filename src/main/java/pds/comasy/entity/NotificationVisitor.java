@@ -5,42 +5,36 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.util.Date;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "delivery")
-public class Delivery {
+@Table(name = "notification_visitor")
+public class NotificationVisitor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer number;
 
-    @Column(name = "resident_id")
-    private Integer residentId;
+    @ManyToOne
+    @JoinColumn(name = "visitor_id")
+    private Visitor visitor;
 
     @Column
-    private Date arrivalDate;
+    private Date time;
 
     @Column
-    private Boolean delivered;
-
-    @Transient
-    private String formattedArrivalDate;
-
-    public void setFormattedArrivalDate(String formattedArrivalDate) {
-        this.formattedArrivalDate = formattedArrivalDate;
-    }
-
+    private Boolean authorized;
 }

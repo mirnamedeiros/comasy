@@ -90,10 +90,24 @@ public class IndexController {
         return modelAndView;
     }
 
-    @GetMapping("/delivery/form")
+    /*@GetMapping("/delivery/form")
     public ModelAndView deliveryForm() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("reception/form");
+
+        List<ResidentDto> residents = residentService.getAllResidents();
+        modelAndView.addObject("residents", residents);
+
+        return modelAndView;
+    }*/
+
+    @GetMapping("/reception")
+    public ModelAndView receptionMenu() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("reception/view");
+
+        List<Visitor> visitors = visitorService.getAllVisitors();
+        modelAndView.addObject("visitors", visitors);
 
         List<ResidentDto> residents = residentService.getAllResidents();
         modelAndView.addObject("residents", residents);

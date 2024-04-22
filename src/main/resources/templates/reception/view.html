@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reception Menu</title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row mt-4 card">
+        <h2 class="card-header">Portaria - Morador</h2>
+        <div class="card-body">
+            <div class="col-md-6">
+                <h3>Visitantes</h3>
+                <form>
+                    <div class="form-group">
+                        <select class="form-control" id="visitor" name="visitorId" aria-label=".form-control">
+                            <option selected>Selecione o visitante</option>
+                            <option th:each="visitor : ${visitors}"
+                                    th:value="${visitor.id}"
+                                    th:text="${visitor.person.name}"></option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="notificationVisitor()">Notificar Portaria</button>
+                </form>
+            </div>
+
+            <div class="col-md-6 mt-4">
+                <a href="/comasy/visitor/form" class="btn btn-info">Adicionar Novo Visitante</a>
+            </div>
+
+            <div class="col-md-6 mt-5">
+                <h3>Minhas entregas</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Data de Chegada</th>
+                        <th>Opções</th>
+                    </tr>
+                    </thead>
+                    <tbody id="pending-deliveries-body">
+                    <!-- As entregas pendentes serão adicionadas aqui dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4 card">
+        <h2 class="card-header">Portaria - Porteiro</h2>
+        <div class="card-body">
+            <div class="col-md-6">
+                <h3>Adicionar entregas</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="resident">Residente:</label>
+                        <select class="form-control" id="resident" name="residentId">
+                            <option th:each="resident : ${residents}" th:value="${resident.id}" th:text="${resident.person.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrivalDate">Data de Chegada:</label>
+                        <input type="date" class="form-control" id="arrivalDate" name="arrivalDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required>
+                    </div>
+                    <input type="hidden" name="delivered" value="false">
+                    <button type="button" class="btn btn-primary" onclick="notificationDelivery()">Notificar Morador</button>
+                </form>
+            </div>
+
+            <div class="col-12 mt-4">
+                <h3>Notificações de Visitantes</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Nome do Visitante</th>
+                        <th>Opções</th>
+                    </tr>
+                    </thead>
+                    <tbody id="pending-notifications-body">
+                    <!-- As notificações de visitantes pendentes serão adicionadas aqui dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="qrCodeModal" tabindex="-1" role="dialog" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrCodeModalLabel">QR Code do Visitante</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="qrCodeImage" src="" alt="QR Code do Visitante">
+                <p id="verificationResult"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button id="verifyButton" type="button" class="btn btn-primary" onclick="verifyQRCode()">Verificar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.0/js/bootstrap.min.js}"></script>
+<script>
+    function notificationVisitor() {
+
+        var visitorId = $('#visitor').val();
+
+        $.get('/api/visitor/' + visitorId, function(visitor) {
+            var nVisitor = {
+                visitor: visitor,
+                time: new Date(),
+                authorized: false
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/reception/notification',
+                contentType: 'application/json',
+                data: JSON.stringify(nVisitor),
+                success: function () {
+                    console.log("Notificação criada com sucesso!");
+                    loadPendingNotifications();
+                },
+                error: function () {
+                    console.error("Vixe!");
+                }
+            });
+        });
+    }
+
+    function notificationDelivery() {
+        var arrivalDateValue = new Date($('#arrivalDate').val());
+        arrivalDateValue.setDate(arrivalDateValue.getDate() + 1);
+        console.log(arrivalDateValue)
+
+        var nDelivery = {
+            residentId: $('#resident').val(),
+            arrivalDate: arrivalDateValue,
+            delivered: false
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/reception/delivery',
+            contentType: 'application/json',
+            data: JSON.stringify(nDelivery),
+            success: function () {
+                console.log("Entrega Criada!");
+                loadPendingDeliveries();
+            },
+            error: function () {
+                console.error("Vixe!");
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        loadPendingDeliveries();
+    });
+
+    function loadPendingDeliveries() {
+        $.get('/api/reception/pending-deliveries', function(deliveries) {
+            var tbody = $('#pending-deliveries-body');
+            tbody.empty();
+            $.each(deliveries, function(index, delivery) {
+                var row = '<tr>' +
+                    '<td>' + delivery.formattedArrivalDate + '</td>' +
+                    '<td><button class="btn btn-success" onclick="confirmDelivery(' + delivery.number + ')">Confirmar</button></td>' +
+                    '</tr>';
+                tbody.append(row);
+            });
+        });
+    }
+
+    function confirmDelivery(deliveryId) {
+        $.get('/api/reception/delivery/' + deliveryId, function(delivery) {
+            if (delivery) {
+                delivery.delivered = true;
+                $.ajax({
+                    type: 'PUT',
+                    url: '/api/reception/delivery/' + deliveryId,
+                    contentType: 'application/json',
+                    data: JSON.stringify(delivery),
+                    success: function () {
+                        console.log("Entrega confirmada com sucesso!");
+                        loadPendingDeliveries();
+                    },
+                    error: function () {
+                        console.error("Erro ao confirmar entrega!");
+                    }
+                });
+            } else {
+                console.error("Entrega não encontrada!");
+            }
+        });
+    }
+    $(document).ready(function() {
+        loadPendingNotifications();
+    });
+
+    function loadPendingNotifications() {
+        $.get('/api/reception/pending-notifications', function(notifications) {
+            var tbody = $('#pending-notifications-body');
+            tbody.empty();
+            $.each(notifications, function(index, notification) {
+                console.log("QR Code Text: ", JSON.stringify(notification.visitor.qrCode));
+                var row = '<tr>' +
+                    '<td>' + notification.number + '</td>' +
+                    '<td>' + notification.visitor.person.name + '</td>' +
+                    '<td>' +
+                    '<button class="btn btn-success mx-2" onclick="authorizeNotification(' + notification.number + ')">Autorizar</button>' +
+                    '<button class="btn btn-info mx-2" data-qrcode=\'' + JSON.stringify(notification.visitor.qrCode) + '\' onclick="openQRCodeModal(this)">Verificar QR Code</button>' +
+                    '</td>' +
+                    '</tr>';
+                tbody.append(row);
+            });
+        });
+    }
+
+    function authorizeNotification(notificationNumber) {
+        $.ajax({
+            type: 'PUT',
+            url: '/api/reception/notification/' + notificationNumber + '/authorize',
+            contentType: 'application/json',
+            success: function () {
+                console.log("Notificação autorizada com sucesso!");
+                loadPendingNotifications();
+            },
+            error: function () {
+                console.error("Erro ao autorizar notificação!");
+            }
+        });
+    }
+
+    function openQRCodeModal(button) {
+        var qrCodeText = $(button).data('qrcode');
+        gerarQRCode(qrCodeText);
+        $('#qrCodeModal').modal('show');
+        $('#verifyButton').off('click').on('click', function () {
+            verifyQRCode(qrCodeText);
+        });
+    }
+
+    function verifyQRCode(qrCodeText) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/visitor/verify',
+            contentType: 'application/json',
+            data: JSON.stringify({ qrCodeText: qrCodeText }),
+            success: function (response) {
+                $('#verificationResult').text(response.message);
+            },
+            error: function () {
+                console.error("Erro ao verificar o QR Code!");
+            }
+        });
+    }
+
+    function gerarQRCode(texto) {
+        console.log(texto);
+        $.ajax({
+            type: 'GET',
+            url: '/api/visitor/generate',
+            data: { text: texto },
+            success: function(data) {
+                var imagem = 'data:image/png;base64,' + data;
+                $('#qrCodeImage').attr('src', imagem);
+            },
+            error: function() {
+                console.error("Erro ao gerar o QR Code!");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

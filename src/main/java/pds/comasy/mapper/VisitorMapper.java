@@ -17,6 +17,7 @@ public class VisitorMapper {
 
     public static VisitorDto mapToVisitorDto(Visitor visitor) {
         VisitorDto visitorDto = new VisitorDto();
+        visitorDto.setId(visitor.getId());
         visitorDto.setPerson(PersonMapper.mapToPersonDto(visitor.getPerson()));
         visitorDto.setTypeVisitor(visitor.getTypeVisitor());
         visitorDto.setQrCode(visitor.getQrCode());
