@@ -4,9 +4,37 @@
     <meta charset="UTF-8">
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
     <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <title>Cadastro de Condomínio</title>
+    <style>
+        .nav-link {
+          color: white;
+        }
+    </style>
 </head>
 <body>
+<ul class="nav" style="background: blue;">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/comasy/resident/form">Residentes</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/apartments">Apartamentos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/comasy/visitor/form">Visitas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/condominium/">Condomínio</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Perfil</a>
+    </li>
+</ul>
+
 <div class="container">
     <h1 class="mt-5">Cadastro de Condomínio</h1>
 
@@ -19,18 +47,18 @@
             </div>
             <div class="col">
                 <label for="input-cnpj">CNPJ</label>
-                <input type="text" class="form-control" id="input-cnpj" name="cnpj">
+                <input type="text" class="form-control" id="input-cnpj" name="cnpj" placeholder="00.000.000/0000-00">
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col">
                 <label for="input-tel">Telefone</label>
-                <input type="number" class="form-control" id="input-tel" name="telephoneNumber">
+                <input type="text" class="form-control" id="input-tel" name="telephoneNumber"  placeholder="(00) 00000-0000">
             </div>
             <div class="col">
                 <label for="input-cep">CEP</label>
-                <input type="text" class="form-control" id="input-cep" name="zipCode">
+                <input type="text" class="form-control" id="input-cep" name="zipCode" placeholder="00000-000">
             </div>
             <div class="col">
                 <label for="input-rua">Rua</label>
@@ -56,5 +84,14 @@
         <button type="submit" class="btn btn-primary">Salvar</button>
     </form>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#input-cnpj').mask('00.000.000/0000-00');
+
+        $('#input-tel').mask('(00) 00000-0000');
+
+        $('#input-cep').mask('00000-000');
+    });
+</script>
 </body>
 </html>

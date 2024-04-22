@@ -5,8 +5,34 @@
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
     <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
     <title>Cadastro de Visitante</title>
+    <style>
+        .nav-link {
+          color: white;
+        }
+    </style>
 </head>
 <body>
+<ul class="nav" style="background: blue;">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/comasy/resident/form">Residentes</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/apartments">Apartamentos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/comasy/visitor/form">Visitas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/condominium/">Condomínio</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Perfil</a>
+    </li>
+</ul>
+
 <div class="container">
     <h1 class="mt-5">Cadastro de Visitante</h1>
 
