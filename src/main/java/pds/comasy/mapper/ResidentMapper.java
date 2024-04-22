@@ -45,4 +45,12 @@ public class ResidentMapper {
 
         return residentDto;
     }
+
+    public static List<ResidentDto> mapToResidentDtoList(List<Resident> residents) {
+        List<ResidentDto> residentDtos = new ArrayList<>();
+        for (Resident resident : residents) {
+            residentDtos.add(mapToResidentDto(resident));
+        }
+        return residentDtos;
+    }
 }

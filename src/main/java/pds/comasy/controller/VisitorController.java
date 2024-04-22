@@ -1,7 +1,9 @@
 package pds.comasy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pds.comasy.dto.VisitorDto;
+import pds.comasy.service.QrCodeService;
 import pds.comasy.service.VisitorService;
 
 import java.util.HashMap;
@@ -22,12 +26,11 @@ import java.util.Map;
 @RequestMapping("/api/visitor")
 public class VisitorController {
 
-    private final VisitorService visitorService;
+    @Autowired
+    private VisitorService visitorService;
 
     @Autowired
-    public VisitorController(VisitorService visitorService) {
-        this.visitorService = visitorService;
-    }
+    private QrCodeService qrCodeService;
 
     @PostMapping
     public ResponseEntity<VisitorDto> createVisitor(@RequestBody VisitorDto visitorDto) {
@@ -79,6 +82,19 @@ public class VisitorController {
         } else {
             response.put("message", "QR Code inválido");
             return ResponseEntity.ok(response);
+        }
+    }
+
+    @GetMapping(value = "/generate", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> generateQrCode(@RequestParam("text") String text) {
+        try {
+            byte[] qrCodeImage = qrCodeService.generateQRCode(text, 300, 300);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG);
+            return new ResponseEntity<>(qrCodeImage, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

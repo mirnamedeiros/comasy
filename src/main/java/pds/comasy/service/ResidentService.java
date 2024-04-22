@@ -52,6 +52,12 @@ public class ResidentService {
         return ResidentMapper.mapToResidentDto(resident);
     }
 
+    @Transactional(readOnly = true)
+    public List<ResidentDto> getAllResidents() {
+        List<Resident> residents = residentRepository.findAll();
+        return ResidentMapper.mapToResidentDtoList(residents);
+    }
+
     @Transactional
     public ResidentDto updateResident(Long id, ResidentDto residentDto) throws Exception {
         Resident existingResident = residentRepository.findById(id)

@@ -1,5 +1,6 @@
 package pds.comasy.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.dto.ResidentDto;
 import pds.comasy.dto.VisitorDto;
+import pds.comasy.entity.Resident;
 import pds.comasy.entity.Visitor;
 import pds.comasy.enums.EnumRole;
 import pds.comasy.enums.EnumTypeVisitor;
 import pds.comasy.service.QrCodeService;
+import pds.comasy.service.ResidentService;
 import pds.comasy.service.VisitorService;
 
 import java.util.Arrays;
@@ -25,14 +28,14 @@ import java.util.Optional;
 @RequestMapping("/comasy")
 public class IndexController {
 
+    @Autowired
     private VisitorService visitorService;
 
+    @Autowired
     private QrCodeService qrCodeService;
 
-    public IndexController(QrCodeService qrCodeService, VisitorService visitorService) {
-        this.qrCodeService = qrCodeService;
-        this.visitorService = visitorService;
-    }
+    @Autowired
+    private ResidentService residentService;
 
     @GetMapping("/resident/form")
     public ModelAndView residentForm() {
@@ -63,7 +66,7 @@ public class IndexController {
 
 
     @GetMapping("/visitor/{id}")
-    public ModelAndView visitorPage(@PathVariable Long id, Model model) {
+    public ModelAndView visitorPage(@PathVariable Long id) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("visitor/view");
 
@@ -83,6 +86,31 @@ public class IndexController {
             System.out.println(e.getMessage());
             modelAndView.addObject("visitor", null);
         }
+
+        return modelAndView;
+    }
+
+    /*@GetMapping("/delivery/form")
+    public ModelAndView deliveryForm() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("reception/form");
+
+        List<ResidentDto> residents = residentService.getAllResidents();
+        modelAndView.addObject("residents", residents);
+
+        return modelAndView;
+    }*/
+
+    @GetMapping("/reception")
+    public ModelAndView receptionMenu() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("reception/view");
+
+        List<Visitor> visitors = visitorService.getAllVisitors();
+        modelAndView.addObject("visitors", visitors);
+
+        List<ResidentDto> residents = residentService.getAllResidents();
+        modelAndView.addObject("residents", residents);
 
         return modelAndView;
     }
