@@ -7,34 +7,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <title>Cadastro de Condomínio</title>
-    <style>
-        .nav-link {
-          color: white;
-        }
-    </style>
 </head>
 <body>
-<ul class="nav" style="background: blue;">
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">Home</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/comasy/resident/form">Residentes</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/apartments">Apartamentos</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/comasy/visitor/form">Visitas</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/condominium/">Condomínio</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Perfil</a>
-    </li>
-</ul>
-
+<div th:insert="../static/fragments/nav-bar :: nav"></div>
 <div class="container">
     <h1 class="mt-5">Cadastro de Condomínio</h1>
 
