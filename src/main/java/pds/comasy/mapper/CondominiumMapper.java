@@ -55,4 +55,26 @@ public class CondominiumMapper {
 
         return condominiumDto;
     }
+
+    public static List<Condominium> mapToListCondominium(List<CondominiumDto> condominiumDtoList) {
+        List<Condominium> condominiumList = new ArrayList<>();
+
+        if(condominiumDtoList != null) {
+            for(CondominiumDto condominiumDto : condominiumDtoList) {
+                condominiumList.add(CondominiumMapper.mapToCondominium(condominiumDto));
+            }
+        }
+        return condominiumList;
+    }
+
+    public static List<CondominiumDto> mapToListCondominiumDto(List<Condominium> condominiumList) {
+       List<CondominiumDto> condominiumDtoList = new ArrayList<>();
+
+       if(condominiumList != null) {
+           for(Condominium condominium : condominiumList) {
+               condominiumDtoList.add(CondominiumMapper.mapToCondominiumDto(condominium));
+           }
+       }
+       return condominiumDtoList;
+    }
 }
