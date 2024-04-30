@@ -17,7 +17,7 @@ public class CondominiumDto {
 
     private String cnpj;
 
-    private int telephoneNumber;
+    private String telephoneNumber;
 
     private String zipCode;
 

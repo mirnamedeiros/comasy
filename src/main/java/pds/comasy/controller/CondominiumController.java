@@ -1,6 +1,7 @@
 package pds.comasy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,17 +30,19 @@ public class CondominiumController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<CondominiumDto>> listCondominium() {
+    public ModelAndView listCondominium(Model model) {
         List<CondominiumDto> condominiumDtoList = condominiumService.listCondominium();
-        return ResponseEntity.ok(condominiumDtoList);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject(model.addAttribute("list", condominiumDtoList));
+        modelAndView.setViewName("condominium/list");
+        return modelAndView;
     }
 
     @PostMapping("/cadastrar")
-    public ModelAndView createdCondominium(@RequestBody CondominiumDto condominiumDto) throws Exception {
-        String msg = condominiumService.createCondominium(condominiumDto);
+    public ModelAndView createdCondominium(@ModelAttribute("condominium") CondominiumDto condominiumDto) throws Exception {
+        CondominiumDto condominium = condominiumService.createCondominium(condominiumDto);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("condominium/list");
-        modelAndView.addObject("msg", msg);
+        modelAndView.setViewName("redirect:/condominium/listar");
         return modelAndView;
     }
 

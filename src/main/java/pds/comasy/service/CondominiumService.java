@@ -22,10 +22,11 @@ public class CondominiumService {
     private CondominiumRepository condominiumRepository;
 
     @Transactional
-    public String createCondominium(CondominiumDto condominiumDto) throws Exception {
+    public CondominiumDto createCondominium(CondominiumDto condominiumDto) throws Exception {
+        validarCampos(condominiumDto);
         Condominium condominium = CondominiumMapper.mapToCondominium(condominiumDto);
         condominiumRepository.save(condominium);
-        return "Condomínio criado com sucesso!";
+        return CondominiumMapper.mapToCondominiumDto(condominium);
     }
 
     public List<CondominiumDto> listCondominium() {
@@ -45,5 +46,22 @@ public class CondominiumService {
 
         Condominium savedCondominium = condominiumRepository.save(updateCondominium);
         return CondominiumMapper.mapToCondominiumDto(savedCondominium);
+    }
+
+
+    public void validarCampos(CondominiumDto condominiumDto) throws Exception {
+        if(condominiumDto.getName() == null || condominiumDto.getName() == "") {
+            throw new Exception("Erro no nome de condomínio");
+        }
+
+        if(condominiumDto.getCity() == null || condominiumDto.getState() == null
+                || condominiumDto.getNeighborhood() == null || condominiumDto.getStreetAddress() == null
+                || condominiumDto.getState() == null || condominiumDto.getZipCode() == null) {
+            throw new Exception("Erro no endereço");
+        }
+
+        if(condominiumDto.getCnpj() == null) {
+            throw new Exception("Erro no cnpj");
+        }
     }
 }

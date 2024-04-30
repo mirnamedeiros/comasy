@@ -5,16 +5,54 @@
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
     <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
     <title>Lista de Condomínios</title>
+    <style>
+        /* Estilos personalizados */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
 <div th:insert="../static/fragments/nav-bar :: nav"></div>
 <div class="container">
     <h1 class="mt-5">Lista de Condomínios</h1>
-        <div class="mb-3 form-group">
-           <p>Lista</p>
-        </div>
-
-    <span th:text="{msg != null }"></span>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CNPJ</th>
+            <th>Telefone</th>
+            <th>Cidade</th>
+            <th>CEP</th>
+            <th>Endereço</th>
+            <th>Bairro</th>
+            <th>Estado</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${list}">
+            <td th:text="${c.name}"></td>
+            <td th:text="${c.cnpj}"></td>
+            <td th:text="${c.telephoneNumber}"></td>
+            <td th:text="${c.city}"></td>
+            <td th:text="${c.zipCode}"></td>
+            <td th:text="${c.streetAddress}"></td>
+            <td th:text="${c.neighborhood}"></td>
+            <td th:text="${c.state}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <span th:text="${msg != null }"></span>
 </div>
 </body>
 </html>

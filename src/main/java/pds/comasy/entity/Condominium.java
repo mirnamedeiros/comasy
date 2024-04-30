@@ -24,7 +24,7 @@ public class Condominium {
     private String cnpj;
 
     @Column(nullable = false)
-    private int telephoneNumber;
+    private String telephoneNumber;
 
     @Column(nullable = false)
     private String zipCode;

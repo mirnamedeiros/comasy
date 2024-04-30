@@ -15,12 +15,12 @@ public class CondominiumMapper {
         condominium.setId(condominiumDto.getId());
         condominium.setName(condominiumDto.getName());
         condominium.setCity(condominiumDto.getCity());
-        condominium.setCnpj(condominiumDto.getCnpj());
+        condominium.setCnpj(condominiumDto.getCnpj().replace("-", "").replace(".", "").replace("/", ""));
         condominium.setState(condominiumDto.getState());
         condominium.setNeighborhood(condominiumDto.getNeighborhood());
         condominium.setStreetAddress(condominiumDto.getStreetAddress());
-        condominium.setTelephoneNumber(condominiumDto.getTelephoneNumber());
-        condominium.setZipCode(condominiumDto.getZipCode());
+        condominium.setTelephoneNumber(condominiumDto.getTelephoneNumber().replaceAll("[()-]", ""));
+        condominium.setZipCode(condominiumDto.getZipCode().replaceAll("[.-]", ""));
 
         List<Apartment> apartmentList = new ArrayList<>();
         if (condominiumDto.getApartmentList() != null) {
@@ -38,12 +38,12 @@ public class CondominiumMapper {
         condominiumDto.setId(condominium.getId());
         condominiumDto.setName(condominium.getName());
         condominiumDto.setCity(condominium.getCity());
-        condominiumDto.setCnpj(condominium.getCnpj());
+        condominiumDto.setCnpj(condominium.getCnpj().replace("-", "").replace(".", "").replace("/", ""));
         condominiumDto.setState(condominium.getState());
         condominiumDto.setNeighborhood(condominium.getNeighborhood());
         condominiumDto.setStreetAddress(condominium.getStreetAddress());
-        condominiumDto.setTelephoneNumber(condominium.getTelephoneNumber());
-        condominiumDto.setZipCode(condominium.getZipCode());
+        condominiumDto.setTelephoneNumber(condominium.getTelephoneNumber().replaceAll("[()-]", ""));
+        condominiumDto.setZipCode(condominium.getZipCode().replaceAll("[.-]", ""));
 
         if(condominium.getApartmentList() != null) {
             List<ApartmentDto> apartmentDtoList = new ArrayList<>();
