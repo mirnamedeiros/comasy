@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <title>Cadastro de Apartamento</title>
+</head>
+<body>
+<div th:insert="~{../static/fragments/nav-bar :: nav}"></div>
+<div class="container">
+    <h1 class="mt-5">Cadastro de Apartamento</h1>
+
+    <form id="apartmentForm" th:action="@{/apartment/cadastrar}" method="post" class="mb-5" th:object="${apartment}">
+
+        <div class="row mb-3">
+            <div class="col-6">
+                <label for="input-number">Número</label>
+                <input type="number" class="form-control" id="input-number" name="number">
+            </div>
+            <div class="col-6">
+                <label for="input-block">Bloco</label>
+                <input type="text" class="form-control" id="input-block" name="block">
+            </div>
+
+            <div class="col-6">
+                <label for="input-residentOwnerCpf">CPF titular</label>
+                <input type="text" class="form-control" id="input-residentOwnerCpf" name="residentOwnerCpf"  placeholder="000.000.000-00">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-3">Salvar</button>
+    </form>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#input-residentOwnerCpf').mask('000.000.000-00');
+    });
+</script>
+</body>
+</html>

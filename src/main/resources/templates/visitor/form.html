@@ -5,14 +5,9 @@
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
     <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
     <title>Cadastro de Visitante</title>
-    <style>
-        .nav-link {
-          color: white;
-        }
-    </style>
 </head>
 <body>
-<div th:insert="../static/fragments/nav-bar :: nav"></div>
+<div th:insert="~{../static/fragments/nav-bar :: nav}"></div>
 <div class="container">
     <h1 class="mt-5">Cadastro de Visitante</h1>
 
