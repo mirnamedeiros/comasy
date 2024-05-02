@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pds.comasy.dto.PersonDto;
 import pds.comasy.dto.VisitorDto;
 import pds.comasy.entity.Visitor;
+import pds.comasy.mapper.PersonMapper;
 import pds.comasy.mapper.VisitorMapper;
 import pds.comasy.repository.VisitorRepository;
 
@@ -43,14 +44,11 @@ public class VisitorService {
                 personService.createPerson(visitorDto.getPerson());
             }
 
-            String qrCodeText = VisitorMapper.generateQRCodeText(visitorDto);
+            String qrCodeText = VisitorMapper.generateQRCodeText(visitorDto.getPerson());
             visitorDto.setQrCode(qrCodeText);
-            System.out.println(visitorDto.getQrCode());
             Visitor savedVisitor = visitorRepository.save(VisitorMapper.mapToVisitor(visitorDto));
-            System.out.println(savedVisitor.getQrCode());
             return VisitorMapper.mapToVisitorDto(savedVisitor);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new Exception("Failed to save visitor");
         }
     }
@@ -62,7 +60,7 @@ public class VisitorService {
         Visitor updatedVisitor = VisitorMapper.mapToVisitor(visitorDto);
         updatedVisitor.setId(visitor.getId());
 
-        String qrCodeText = VisitorMapper.generateQRCodeText(visitorDto);
+        String qrCodeText = VisitorMapper.generateQRCodeText(visitorDto.getPerson());
         updatedVisitor.setQrCode(qrCodeText);
 
         Visitor savedUpdatedVisitor = visitorRepository.save(updatedVisitor);
@@ -79,10 +77,9 @@ public class VisitorService {
 
     public boolean verifyQRCode(String qrCodeText) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            VisitorDto visitorDto = mapper.readValue(qrCodeText, VisitorDto.class);
+            PersonDto visitor = PersonMapper.mapJsonToPersonDto(qrCodeText);
 
-            String personCpf = visitorDto.getPerson().getCpf();
+            String personCpf = visitor.getCpf();
 
             PersonDto person = personService.getPersonByCpf(personCpf);
             if (personService.getPersonByCpf(personCpf) == null) {
@@ -91,10 +88,10 @@ public class VisitorService {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String personBirthday = dateFormat.format(person.getBirthday());
-            String visitorBirthday = dateFormat.format(visitorDto.getPerson().getBirthday());
+            String visitorBirthday = dateFormat.format(visitor.getBirthday());
 
-            return person.getName().equals(visitorDto.getPerson().getName())
-                    && person.getCpf().equals(visitorDto.getPerson().getCpf())
+            return person.getName().equals(visitor.getName())
+                    && person.getCpf().equals(visitor.getCpf())
                     && personBirthday.equals(visitorBirthday);
 
         } catch (Exception e) {
