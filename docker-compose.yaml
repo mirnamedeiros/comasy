@@ -8,5 +8,5 @@ services:
       MYSQL_DATABASE: 'comasy'
       MYSQL_USER: ${DATABASE_USERNAME}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_ROOT_PASSWORD: 'comasy'
+      MYSQL_ROOT_PASSWORD: 'root'
       MYSQL_PORT: 3306

@@ -34,4 +34,8 @@ public class Resident {
 
     @Column(name = "role_id")
     private Integer roleId;
+
+    @ManyToOne
+    @JoinColumn(name = "apartment_id")
+    private Apartment apartment;
 }
