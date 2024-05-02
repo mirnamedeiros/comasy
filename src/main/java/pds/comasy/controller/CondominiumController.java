@@ -40,9 +40,14 @@ public class CondominiumController {
 
     @PostMapping("/cadastrar")
     public ModelAndView createdCondominium(@ModelAttribute("condominium") CondominiumDto condominiumDto) throws Exception {
-        CondominiumDto condominium = condominiumService.createCondominium(condominiumDto);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/condominium/listar");
+        try {
+            CondominiumDto condominium = condominiumService.createCondominium(condominiumDto);
+            modelAndView.setViewName("redirect:/condominium/listar");
+            modelAndView.addObject("msg", "Condomínio cadastrado com sucesso!");
+        } catch (Exception e) {
+            modelAndView.addObject("msg", e.getMessage());
+        }
         return modelAndView;
     }
 
