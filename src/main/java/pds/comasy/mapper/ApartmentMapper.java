@@ -14,7 +14,9 @@ public class ApartmentMapper {
         apartment.setNumber(apartmentDto.getNumber());
         apartment.setBlock(apartmentDto.getBlock());
         apartment.setResidentOwnerCpf(apartmentDto.getResidentOwnerCpf());
-
+        if (apartmentDto.getCondominium() != null) {
+            apartment.setCondominium(apartmentDto.getCondominium());
+        }
         return apartment;
     }
 
@@ -24,7 +26,9 @@ public class ApartmentMapper {
         apartmentDto.setNumber(apartment.getNumber());
         apartmentDto.setBlock(apartment.getBlock());
         apartmentDto.setResidentOwnerCpf(apartment.getResidentOwnerCpf());
-
+        if (apartment.getCondominium() != null) {
+            apartmentDto.setCondominium(apartment.getCondominium());
+        }
         return apartmentDto;
     }
 

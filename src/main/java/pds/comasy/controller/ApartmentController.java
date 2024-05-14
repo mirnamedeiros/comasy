@@ -6,7 +6,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.dto.ApartmentDto;
+import pds.comasy.dto.CondominiumDto;
+import pds.comasy.entity.Condominium;
+import pds.comasy.mapper.CondominiumMapper;
+import pds.comasy.repository.CondominiumRepository;
 import pds.comasy.service.ApartmentService;
+import pds.comasy.service.CondominiumService;
 
 import java.util.List;
 
@@ -17,11 +22,18 @@ public class ApartmentController {
     @Autowired
     private ApartmentService apartmentService;
 
+    @Autowired
+    private CondominiumService condominiumService;
+
+    @Autowired
+    private CondominiumRepository condominiumRepository;
+
     @GetMapping("/")
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("apartment/form");
         modelAndView.addObject("apartment", new ApartmentDto());
+        modelAndView.addObject("listCondominium", condominiumService.listCondominium());
         return modelAndView;
     }
 
@@ -35,10 +47,12 @@ public class ApartmentController {
     }
 
     @PostMapping("/cadastrar")
-    public ModelAndView createdApartment(@ModelAttribute("apartment") ApartmentDto apartmentDto) {
+    public ModelAndView createdApartment(@ModelAttribute("apartment") ApartmentDto apartmentDto, @RequestParam("condominiumId") Long condominiumId) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/apartment/list");
         try {
+            Condominium condominium = (condominiumRepository.getById(condominiumId));
+            apartmentDto.setCondominium(condominium);
             apartmentService.createdApartment(apartmentDto);
             modelAndView.addObject("msg", "Apartamento cadastrado com sucesso!");
         } catch (Exception e) {

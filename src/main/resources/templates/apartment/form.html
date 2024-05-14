@@ -26,6 +26,13 @@
             </div>
 
             <div class="col-6">
+                <label for="input-condominium">Condomínio</label>
+                <select class="form-control" id="input-condominium"  name="condominiumId">
+                    <option th:each="c : ${listCondominium}" th:value="${c.id}" th:text="${c.name + '-' + c.streetAddress + ',' + c.neighborhood + ',' + c.city + '/' + c.state + ' ' + c.zipCode }"></option>
+                </select>
+            </div>
+
+            <div class="col-6">
                 <label for="input-residentOwnerCpf">CPF titular</label>
                 <input type="text" class="form-control" id="input-residentOwnerCpf" name="residentOwnerCpf"  placeholder="000.000.000-00">
             </div>

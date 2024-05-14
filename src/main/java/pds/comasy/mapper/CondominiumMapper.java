@@ -27,7 +27,7 @@ public class CondominiumMapper {
             for (ApartmentDto apartmentDto : condominiumDto.getApartmentList()) {
                 apartmentList.add(ApartmentMapper.mapToApartment(apartmentDto));
             }
-            condominium.setApartmentList(apartmentList);
+           // condominium.setApartmentList(apartmentList);
         }
 
         return condominium;
@@ -45,13 +45,13 @@ public class CondominiumMapper {
         condominiumDto.setTelephoneNumber(condominium.getTelephoneNumber().replaceAll("[()-]", ""));
         condominiumDto.setZipCode(condominium.getZipCode().replaceAll("[.-]", ""));
 
-        if(condominium.getApartmentList() != null) {
+       /* if(condominium.getApartmentList() != null) {
             List<ApartmentDto> apartmentDtoList = new ArrayList<>();
             for (Apartment apartment : condominium.getApartmentList()) {
                 apartmentDtoList.add(ApartmentMapper.mapToApartmentDto(apartment));
             }
             condominiumDto.setApartmentList(apartmentDtoList);
-        }
+        }*/
 
         return condominiumDto;
     }
