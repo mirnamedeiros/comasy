@@ -44,6 +44,10 @@ public class ApartmentService {
     }
 
     public void validarCampos(ApartmentDto apartmentDto) throws Exception {
+        if(existsApartment(apartmentDto)) {
+            throw new Exception("Não foi possível cadastrar, pois já existe um apartamento com esse número e bloco nesse condomínio!");
+        }
+
         if(apartmentDto.getBlock() == null || apartmentDto.getBlock().isEmpty()) {
            throw new Exception("Erro no campo bloco");
         }
@@ -55,5 +59,9 @@ public class ApartmentService {
         if(apartmentDto.getResidentOwnerCpf() == null || apartmentDto.getResidentOwnerCpf().isEmpty()) {
             throw new Exception("Erro no campo cpf");
         }
+    }
+
+    public boolean existsApartment(ApartmentDto apartmentDto) {
+        return apartmentRepository.existsApartment(apartmentDto.getBlock(), apartmentDto.getNumber(), apartmentDto.getCondominium().getId());
     }
 }
