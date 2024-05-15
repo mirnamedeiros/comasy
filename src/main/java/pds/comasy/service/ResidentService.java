@@ -1,8 +1,10 @@
 package pds.comasy.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pds.comasy.dto.PersonDto;
+import pds.comasy.config.SecurityConfiguration;
 import pds.comasy.dto.ResidentDto;
 import pds.comasy.entity.Resident;
 import pds.comasy.mapper.ResidentMapper;
@@ -13,30 +15,28 @@ import java.util.List;
 @Service
 public class ResidentService {
 
-    private final ResidentRepository residentRepository;
+    @Autowired
+    private ResidentRepository residentRepository;
 
-    private final PersonService personService;
+    @Autowired
+    private PersonService personService;
 
-    public ResidentService(ResidentRepository residentRepository, PersonService personService) {
-        this.residentRepository = residentRepository;
-        this.personService = personService;
-    }
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private TokenService jwtTokenService;
+
+    @Autowired
+    private SecurityConfiguration securityConfiguration;
 
     @Transactional
     public ResidentDto createResident(ResidentDto residentDto) throws Exception {
+
         if (!personService.personExists(residentDto.getPerson().getCpf())) {
             personService.createPerson(residentDto.getPerson());
         } else {
             throw new Exception("Resident already exists");
-        }
-
-        List<PersonDto> dependents = residentDto.getDependents();
-        if (dependents != null && !dependents.isEmpty()) {
-            for (PersonDto dependent : dependents) {
-                if (!personService.personExists(dependent.getCpf())) {
-                    personService.createPerson(dependent);
-                }
-            }
         }
 
         Resident savedResident = residentRepository.save(ResidentMapper.mapToResident(residentDto));

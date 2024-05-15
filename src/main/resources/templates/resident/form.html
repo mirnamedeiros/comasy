@@ -7,55 +7,84 @@
     <title>Cadastro de Residente</title>
 </head>
 <body>
-<div th:insert="../static/fragments/nav-bar :: nav"></div>
+<div th:insert="~{../static/fragments/nav-bar :: nav}"></div>
 <div class="container">
     <h1 class="mt-5">Cadastro de Residente</h1>
 
     <form id="residentForm" method="post" class="mb-5">
 
-        <div class="mb-3 form-group">
-            <label for="input-name">Nome</label>
-            <input type="text" class="form-control" id="input-name" name="person.name">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3 form-group">
+                    <label for="input-name">Nome</label>
+                    <input type="text" class="form-control" id="input-name" name="person.name">
+                </div>
+
+                <div class="mb-3 form-group">
+                    <label for="input-cpf">CPF</label>
+                    <input type="text" class="form-control" id="input-cpf" name="person.cpf">
+                </div>
+
+                <div class="mb-3 form-group">
+                    <label for="input-cpf-titular">CPF do Titular</label>
+                    <input type="text" class="form-control" id="input-cpf-titular" name="cpfTitular">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3 form-group">
+                    <label for="input-birthday">Data de Nascimento</label>
+                    <input type="date" class="form-control" id="input-birthday" name="person.birthday">
+                </div>
+
+                <div class="mb-3 form-group">
+                    <label for="input-apartment-number">Número do Apartamento</label>
+                    <input type="text" class="form-control" id="input-apartment-number" name="apartmentNumber">
+                </div>
+
+                <div class="mb-3 form-group">
+                    <label for="input-cnh">CNH</label>
+                    <input type="text" class="form-control" id="input-cnh" name="person.cnh">
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3 form-group">
-            <label for="input-cpf">CPF</label>
-            <input type="text" class="form-control" id="input-cpf" name="person.cpf">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3 form-group">
+                    <label for="input-username">Usuário</label>
+                    <input type="text" class="form-control" id="input-username" name="authentication.username">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3 form-group">
+                    <label for="input-password">Senha</label>
+                    <input type="password" class="form-control" id="input-password" name="authentication.password">
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3 form-group">
-            <label for="input-birthday">Data de Nascimento</label>
-            <input type="date" class="form-control" id="input-birthday" name="person.birthday">
-        </div>
+            <div class="mb-3 form-group">
+                <label for="input-role">Selecione o Papel</label>
+                <select class="form-select" id="input-role" name="role">
+                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                </select>
+            </div>
 
-        <div class="mb-3" id="phone-inputs">
-            <label>Telefone(s)</label>
-        </div>
-        <button type="button" class="btn btn-primary mb-3" id="add-phone">Adicionar Telefone</button>
+        <div>
+            <div class="mb-3" id="phone-inputs">
+                <label>Telefone(s)</label>
+            </div>
 
-
-        <div class="mb-3 form-group">
-            <label for="input-cnh">CNH</label>
-            <input type="text" class="form-control" id="input-cnh" name="person.cnh">
-        </div>
-
-        <div class="mb-3 form-group">
-            <label for="input-apartment-number">Número do Apartamento</label>
-            <input type="text" class="form-control" id="input-apartment-number" name="apartmentNumber">
-        </div>
-
-        <div class="mb-3 form-group">
-            <label for="input-role">Selecione o Papel</label>
-            <select class="form-select" id="input-role" name="role">
-                <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
-            </select>
+            <button type="button" class="btn btn-primary mb-3" id="add-phone">Adicionar Telefone</button>
         </div>
 
         <button type="button" onclick="submitForm()" class="btn btn-primary">Cadastrar Residente</button>
     </form>
 </div>
-<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/jquery/jquery.js}"></script>
+<script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.0/js/bootstrap.min.js}"></script>
 <script>
     function submitForm() {
         var form = $('#residentForm')[0];

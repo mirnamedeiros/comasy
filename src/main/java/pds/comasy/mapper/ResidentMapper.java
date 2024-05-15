@@ -1,8 +1,6 @@
 package pds.comasy.mapper;
 
-import pds.comasy.dto.PersonDto;
 import pds.comasy.dto.ResidentDto;
-import pds.comasy.entity.Person;
 import pds.comasy.entity.Resident;
 
 import java.util.ArrayList;
@@ -14,16 +12,9 @@ public class ResidentMapper {
         Resident resident = new Resident();
         resident.setId(residentDto.getId());
         resident.setApartmentNumber(residentDto.getApartmentNumber());
-        resident.setRoleId(residentDto.getRole());
+        resident.setCpf_titular(residentDto.getCpf_titular());
         resident.setPerson(PersonMapper.mapToPerson(residentDto.getPerson()));
-
-        List<Person> dependents = new ArrayList<>();
-        if(residentDto.getDependents() != null) {
-            for (PersonDto dependentDto : residentDto.getDependents()) {
-                dependents.add(PersonMapper.mapToPerson(dependentDto));
-            }
-            resident.setDependents(dependents);
-        }
+        resident.setUserAuthentication(residentDto.getUserAuthentication());
 
         return resident;
     }
@@ -32,16 +23,9 @@ public class ResidentMapper {
         ResidentDto residentDto = new ResidentDto();
         residentDto.setId(resident.getId());
         residentDto.setApartmentNumber(resident.getApartmentNumber());
-        residentDto.setRole(resident.getRoleId());
+        residentDto.setCpf_titular(resident.getCpf_titular());
         residentDto.setPerson(PersonMapper.mapToPersonDto(resident.getPerson()));
-
-        if(resident.getDependents() != null) {
-            List<PersonDto> dependents = new ArrayList<>();
-            for (Person dependent : resident.getDependents()) {
-                dependents.add(PersonMapper.mapToPersonDto(dependent));
-            }
-            residentDto.setDependents(dependents);
-        }
+        residentDto.setUserAuthentication(resident.getUserAuthentication());
 
         return residentDto;
     }
