@@ -8,6 +8,8 @@ import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.dto.ApartmentDto;
 import pds.comasy.dto.CondominiumDto;
 import pds.comasy.entity.Condominium;
+import pds.comasy.exceptions.EntityAlreadyExistsException;
+import pds.comasy.exceptions.InvalidFieldException;
 import pds.comasy.mapper.CondominiumMapper;
 import pds.comasy.repository.CondominiumRepository;
 import pds.comasy.service.ApartmentService;
@@ -55,8 +57,12 @@ public class ApartmentController {
             apartmentDto.setCondominium(condominium);
             apartmentService.createdApartment(apartmentDto);
             modelAndView.addObject("msg", "Apartamento cadastrado com sucesso!");
-        } catch (Exception e) {
+        } catch (EntityAlreadyExistsException e) {
             modelAndView.addObject("msg", e.getMessage());
+        } catch (InvalidFieldException e) {
+            modelAndView.addObject("msg", e.getMessage());
+        } catch (Exception e) {
+            modelAndView.addObject("msg", "Ocorreu um erro ao cadastrar o apartamento.");
         }
         return modelAndView;
     }

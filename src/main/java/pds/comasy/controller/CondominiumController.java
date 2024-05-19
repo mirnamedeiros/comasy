@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.dto.CondominiumDto;
 import pds.comasy.dto.ResidentDto;
 import pds.comasy.entity.Condominium;
+import pds.comasy.exceptions.InvalidFieldException;
 import pds.comasy.mapper.CondominiumMapper;
 import pds.comasy.service.CondominiumService;
 
@@ -39,12 +40,14 @@ public class CondominiumController {
     }
 
     @PostMapping("/cadastrar")
-    public ModelAndView createdCondominium(@ModelAttribute("condominium") CondominiumDto condominiumDto) throws Exception {
+    public ModelAndView createdCondominium(@ModelAttribute("condominium") CondominiumDto condominiumDto) {
         ModelAndView modelAndView = new ModelAndView();
         try {
             CondominiumDto condominium = condominiumService.createCondominium(condominiumDto);
             modelAndView.setViewName("redirect:/condominium/listar");
             modelAndView.addObject("msg", "Condomínio cadastrado com sucesso!");
+        } catch (InvalidFieldException e) {
+            modelAndView.addObject("msg", e.getMessage());
         } catch (Exception e) {
             modelAndView.addObject("msg", e.getMessage());
         }

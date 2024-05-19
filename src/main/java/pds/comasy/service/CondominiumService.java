@@ -9,6 +9,7 @@ import pds.comasy.dto.PersonDto;
 import pds.comasy.entity.Condominium;
 import pds.comasy.entity.Person;
 import pds.comasy.entity.Resident;
+import pds.comasy.exceptions.InvalidFieldException;
 import pds.comasy.mapper.CondominiumMapper;
 import pds.comasy.mapper.PersonMapper;
 import pds.comasy.repository.CondominiumRepository;
@@ -22,7 +23,7 @@ public class CondominiumService {
     private CondominiumRepository condominiumRepository;
 
     @Transactional
-    public CondominiumDto createCondominium(CondominiumDto condominiumDto) throws Exception {
+    public CondominiumDto createCondominium(CondominiumDto condominiumDto) throws InvalidFieldException {
         validarCampos(condominiumDto);
         Condominium condominium = CondominiumMapper.mapToCondominium(condominiumDto);
         condominiumRepository.save(condominium);
@@ -49,19 +50,19 @@ public class CondominiumService {
     }
 
 
-    public void validarCampos(CondominiumDto condominiumDto) throws Exception {
+    public void validarCampos(CondominiumDto condominiumDto) throws InvalidFieldException {
         if(condominiumDto.getName() == null || condominiumDto.getName() == "") {
-            throw new Exception("Erro no nome de condomínio");
+            throw new InvalidFieldException("Erro no nome de condomínio");
         }
 
         if(condominiumDto.getCity() == null || condominiumDto.getState() == null
                 || condominiumDto.getNeighborhood() == null || condominiumDto.getStreetAddress() == null
                 || condominiumDto.getState() == null || condominiumDto.getZipCode() == null) {
-            throw new Exception("Erro no endereço");
+            throw new InvalidFieldException("Erro no endereço");
         }
 
         if(condominiumDto.getCnpj() == null) {
-            throw new Exception("Erro no cnpj");
+            throw new InvalidFieldException("Erro no cnpj");
         }
     }
 }

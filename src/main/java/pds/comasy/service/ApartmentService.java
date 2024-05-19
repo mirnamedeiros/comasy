@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pds.comasy.dto.ApartmentDto;
 import pds.comasy.entity.Apartment;
+import pds.comasy.exceptions.EntityAlreadyExistsException;
+import pds.comasy.exceptions.InvalidFieldException;
 import pds.comasy.mapper.ApartmentMapper;
 import pds.comasy.repository.ApartmentRepository;
 
@@ -17,7 +19,7 @@ public class ApartmentService {
     private ApartmentRepository apartmentRepository;
 
     @Transactional
-    public ApartmentDto createdApartment(ApartmentDto apartmentDto) throws Exception {
+    public ApartmentDto createdApartment(ApartmentDto apartmentDto) throws EntityAlreadyExistsException, InvalidFieldException {
         validarCampos(apartmentDto);
         Apartment apartment = ApartmentMapper.mapToApartment(apartmentDto);
         apartmentRepository.save(apartment);
@@ -43,21 +45,21 @@ public class ApartmentService {
         return ApartmentMapper.mapToApartmentDto(savedApartment);
     }
 
-    public void validarCampos(ApartmentDto apartmentDto) throws Exception {
+    public void validarCampos(ApartmentDto apartmentDto) throws EntityAlreadyExistsException, InvalidFieldException {
         if(existsApartment(apartmentDto)) {
-            throw new Exception("Não foi possível cadastrar, pois já existe um apartamento com esse número e bloco nesse condomínio!");
+            throw new EntityAlreadyExistsException("Não foi possível cadastrar, pois já existe um apartamento com esse número e bloco nesse condomínio!");
         }
 
         if(apartmentDto.getBlock() == null || apartmentDto.getBlock().isEmpty()) {
-           throw new Exception("Erro no campo bloco");
+           throw new InvalidFieldException("Erro no campo bloco");
         }
 
         if(apartmentDto.getNumber() <= 0) {
-            throw new Exception("Erro no campo número");
+            throw new InvalidFieldException("Erro no campo número");
         }
 
         if(apartmentDto.getResidentOwnerCpf() == null || apartmentDto.getResidentOwnerCpf().isEmpty()) {
-            throw new Exception("Erro no campo cpf");
+            throw new InvalidFieldException("Erro no campo cpf");
         }
     }
 
