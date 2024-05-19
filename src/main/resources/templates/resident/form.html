@@ -53,10 +53,19 @@
 
         <button type="button" onclick="submitForm()" class="btn btn-primary">Cadastrar Residente</button>
     </form>
+    <div id="message-container"></div>
 </div>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 <script th:src="@{/webjars/jquery/jquery.js}"></script>
-<script>
+<script type="text/javascript">
+    function showMessage(message, type) {
+        document.getElementById('message-container').innerHTML = '<div class="alert alert-' + type + '">' + message + '</div>';
+
+        setTimeout(() => {
+            document.getElementById('message-container').innerHTML = '';
+        }, 5000);
+    }
+
     function submitForm() {
         var form = $('#residentForm')[0];
         var formData = new FormData(form);
@@ -94,14 +103,13 @@
             data: JSON.stringify(residentDto),
             dataType: 'json',
             success: function (data) {
-                console.log('Resident created successfully:', data);
+                showMessage('Residente criado com sucesso', 'success');
             },
             error: function (error) {
-                console.error('Error creating resident:', error);
+                showMessage('Erro ao criar residente: ' + error.responseJSON.message, 'danger');
             }
         });
     }
-
 
     $(document).ready(function () {
         $("#add-phone").click(function () {
