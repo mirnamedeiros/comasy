@@ -2,6 +2,7 @@ package pds.comasy.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pds.comasy.dto.PersonDto;
 import pds.comasy.dto.VisitorDto;
 import pds.comasy.entity.Visitor;
 
@@ -24,10 +25,10 @@ public class VisitorMapper {
         return visitorDto;
     }
 
-    public static String generateQRCodeText(VisitorDto visitorDto) {
+    public static String generateQRCodeText(PersonDto personDto) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.writeValueAsString(visitorDto);
+            return mapper.writeValueAsString(personDto);
         } catch (JsonProcessingException e) {
             // handle JSON processing exception
             e.printStackTrace();

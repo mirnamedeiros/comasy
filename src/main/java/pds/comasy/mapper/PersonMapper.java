@@ -1,7 +1,10 @@
 package pds.comasy.mapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import pds.comasy.dto.PersonDto;
 import pds.comasy.entity.Person;
+
+import java.io.IOException;
 
 public class PersonMapper {
 
@@ -23,5 +26,15 @@ public class PersonMapper {
             person.getPhoneNumber(),
             person.getCnh()
         );
+    }
+
+    public static PersonDto mapJsonToPersonDto(String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(json, PersonDto.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

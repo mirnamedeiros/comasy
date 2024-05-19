@@ -1,5 +1,6 @@
 package pds.comasy.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import pds.comasy.dto.VisitorDto;
 import pds.comasy.service.QrCodeService;
 import pds.comasy.service.VisitorService;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,6 @@ public class VisitorController {
 
     @PostMapping
     public ResponseEntity<VisitorDto> createVisitor(@RequestBody VisitorDto visitorDto) {
-        System.out.println(visitorDto.toString());
         try {
             VisitorDto createdVisitor = visitorService.createVisitor(visitorDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdVisitor);
@@ -71,29 +72,24 @@ public class VisitorController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<Map<String, String>> verifyQRCode(@RequestBody Map<String, String> requestBody) {
-        String qrCodeText = requestBody.get("qrCodeText");
-        boolean validQrCode = visitorService.verifyQRCode(qrCodeText);
+    public ResponseEntity<Map<String, String>> verifyQRCode(@RequestBody String text) {
+        System.out.println("Controller: "+text);
+        boolean validQrCode = visitorService.verifyQRCode(text);
 
         Map<String, String> response = new HashMap<>();
-        if (validQrCode) {
-            response.put("message", "QR Code válido");
-            return ResponseEntity.ok(response);
-        } else {
-            response.put("message", "QR Code inválido");
-            return ResponseEntity.ok(response);
-        }
+        response.put("valid", String.valueOf(validQrCode));
+        response.put("message", validQrCode ? "QR Code válido" : "QR Code inválido");
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "/generate", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> generateQrCode(@RequestParam("text") String text) {
+    @GetMapping(value = "/generate")
+    public ResponseEntity<String> generateQrCode(@RequestParam("text") String text) {
         try {
-            byte[] qrCodeImage = qrCodeService.generateQRCode(text, 300, 300);
+            byte[] qrCodeImage = qrCodeService.generateQRCode(text, 200, 200);
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
-            return new ResponseEntity<>(qrCodeImage, headers, HttpStatus.OK);
+            String qrCodeImageData = Base64.getEncoder().encodeToString(qrCodeImage);
+            return new ResponseEntity<>(qrCodeImageData, headers, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

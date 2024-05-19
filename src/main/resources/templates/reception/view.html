@@ -8,6 +8,7 @@
 </head>
 <body>
 <div class="container mt-5">
+    <div id="alertContainer"></div>
     <div class="row mt-4 card">
         <h2 class="card-header">Portaria - Morador</h2>
         <div class="card-body">
@@ -97,7 +98,7 @@
             </div>
             <div class="modal-body">
                 <img id="qrCodeImage" src="" alt="QR Code do Visitante">
-                <p id="verificationResult"></p>
+                <div id="verificationResult"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -109,6 +110,7 @@
 
 <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.5.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/messages.js}"></script>
 <script>
     function notificationVisitor() {
 
@@ -127,11 +129,11 @@
                 contentType: 'application/json',
                 data: JSON.stringify(nVisitor),
                 success: function () {
-                    console.log("Notificação criada com sucesso!");
+                    showAlert(messages.notification.success);
                     loadPendingNotifications();
                 },
                 error: function () {
-                    console.error("Vixe!");
+                    showAlert(messages.notification.error, 'danger');
                 }
             });
         });
@@ -154,11 +156,11 @@
             contentType: 'application/json',
             data: JSON.stringify(nDelivery),
             success: function () {
-                console.log("Entrega Criada!");
+                showAlert(messages.delivery.success);
                 loadPendingDeliveries();
             },
             error: function () {
-                console.error("Vixe!");
+                showAlert(messages.delivery.error, 'danger');
             }
         });
     }
@@ -191,15 +193,15 @@
                     contentType: 'application/json',
                     data: JSON.stringify(delivery),
                     success: function () {
-                        console.log("Entrega confirmada com sucesso!");
+                        showAlert(messages.deliveryConfirmation.success);
                         loadPendingDeliveries();
                     },
                     error: function () {
-                        console.error("Erro ao confirmar entrega!");
+                        showAlert(messages.deliveryConfirmation.error, 'danger');
                     }
                 });
             } else {
-                console.error("Entrega não encontrada!");
+                showAlert(messages.deliveryConfirmation.notFound, 'warning')
             }
         });
     }
@@ -212,13 +214,12 @@
             var tbody = $('#pending-notifications-body');
             tbody.empty();
             $.each(notifications, function(index, notification) {
-                console.log("QR Code Text: ", JSON.stringify(notification.visitor.qrCode));
                 var row = '<tr>' +
                     '<td>' + notification.number + '</td>' +
                     '<td>' + notification.visitor.person.name + '</td>' +
                     '<td>' +
-                    '<button class="btn btn-success mx-2" onclick="authorizeNotification(' + notification.number + ')">Autorizar</button>' +
-                    '<button class="btn btn-info mx-2" data-qrcode=\'' + JSON.stringify(notification.visitor.qrCode) + '\' onclick="openQRCodeModal(this)">Verificar QR Code</button>' +
+                    '<button class="btn btn-success m-2" onclick="authorizeNotification(' + notification.number + ')">Autorizar</button>' +
+                    '<button class="btn btn-info m-2" data-qrcode=\'' + JSON.stringify(notification.visitor.qrCode) + '\' onclick="openQRCodeModal(this)">Verificar QR Code</button>' +
                     '</td>' +
                     '</tr>';
                 tbody.append(row);
@@ -232,11 +233,11 @@
             url: '/api/reception/notification/' + notificationNumber + '/authorize',
             contentType: 'application/json',
             success: function () {
-                console.log("Notificação autorizada com sucesso!");
+                showAlert(messages.notification.success);
                 loadPendingNotifications();
             },
             error: function () {
-                console.error("Erro ao autorizar notificação!");
+                showAlert(messages.notification.error, 'danger');
             }
         });
     }
@@ -254,13 +255,16 @@
         $.ajax({
             type: 'POST',
             url: '/api/visitor/verify',
-            contentType: 'application/json',
             data: JSON.stringify({ qrCodeText: qrCodeText }),
             success: function (response) {
-                $('#verificationResult').text(response.message);
+                if (response.valid) {
+                    $('#verificationResult').html('<div class="alert alert-success" role="alert">QR Code válido</div>');
+                } else {
+                    $('#verificationResult').html('<div class="alert alert-warning" role="alert">QR Code inválido</div>');
+                }
             },
             error: function () {
-                console.error("Erro ao verificar o QR Code!");
+                showAlert(messages.qrCode.error, 'danger');
             }
         });
     }
@@ -276,9 +280,21 @@
                 $('#qrCodeImage').attr('src', imagem);
             },
             error: function() {
-                console.error("Erro ao gerar o QR Code!");
+                showAlert(messages.qrCode.generateError);
             }
         });
+    }
+
+    function showAlert(message, type = 'success') {
+        var alertContainer = $('#alertContainer');
+        var alertClass = 'alert-' + type;
+        var alert = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
+            message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '<span aria-hidden="true">&times;</span>' +
+            '</button>' +
+            '</div>';
+        alertContainer.empty().append(alert);
     }
 
 </script>
