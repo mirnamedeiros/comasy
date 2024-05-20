@@ -29,7 +29,7 @@
             </div>
 
             <div class="col-md-6 mt-4">
-                <a href="/comasy/visitor/form" class="btn btn-info">Adicionar Novo Visitante</a>
+                <a href="/visitor/form" class="btn btn-info">Adicionar Novo Visitante</a>
             </div>
 
             <div class="col-md-6 mt-5">
@@ -112,6 +112,7 @@
 <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.5.0/js/bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/messages.js}"></script>
+<script th:src="@{/js/alert.js}"></script>
 <script>
     function notificationVisitor() {
 
@@ -285,19 +286,6 @@
             }
         });
     }
-
-    function showAlert(message, type = 'success') {
-        var alertContainer = $('#alertContainer');
-        var alertClass = 'alert-' + type;
-        var alert = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
-            message +
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-            '<span aria-hidden="true">&times;</span>' +
-            '</button>' +
-            '</div>';
-        alertContainer.empty().append(alert);
-    }
-
 </script>
 </body>
 </html>

@@ -35,6 +35,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/reception").authenticated()
                         .requestMatchers(HttpMethod.GET, "/resident/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/suggestion/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .build();

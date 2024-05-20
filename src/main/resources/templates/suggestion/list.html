@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Listagem de Sugestões</title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:insert="~{../static/fragments/nav-bar :: nav}"></div>
+<div class="container mt-5">
+    <div id="alertContainer"></div>
+    <div class="card">
+        <h2 class="card-header">Listagem de Sugestões</h2>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Mensagem</th>
+                    <th>Data da Proposta</th>
+                    <th>Quantidade de Votos</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="suggestion : ${suggestions}">
+                    <td th:text="${suggestion.id}"></td>
+                    <td th:text="${suggestion.type}"></td>
+                    <td th:text="${suggestion.message}"></td>
+                    <td th:text="${#dates.format(suggestion.dataProposta, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${suggestion.qtdVotos}"></td>
+                    <td>
+                        <form sec:authorize="hasRole('ADMIN')" id="deleteForm" th:action="@{'/suggestion/' + ${suggestion.id}}" method="post">
+                            <button type="submit" class="btn btn-danger delete-btn">Excluir</button>
+                        </form>
+                        <form id="voteForm" th:action="@{'/suggestion/' + ${suggestion.id} + '/vote'}" method="post">
+                            <button type="submit" class="btn btn-success mt-2 vote-btn">Votar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/alert.js}"></script>
+<script>
+    $(document).ready(function () {
+        var alertMessage = localStorage.getItem('alertMessage');
+        var alertType = localStorage.getItem('alertType');
+        if (alertMessage && alertType) {
+            showAlert(alertMessage, alertType);
+            // Clear the message from localStorage
+            localStorage.removeItem('alertMessage');
+            localStorage.removeItem('alertType');
+        }
+
+        $('.delete-btn').click(function (e) {
+            e.preventDefault();
+            var form = $(this).closest('form');
+            var url = form.attr('action');
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                success: function () {
+                    form.closest('tr').remove();
+                    localStorage.setItem('alertMessage', 'Sugestão excluída com sucesso');
+                    localStorage.setItem('alertType', 'success');
+                    location.reload();
+                },
+                error: function (response) {
+                    let errorMessage = 'An unknown error occurred';
+                    if (response.responseJSON && response.responseJSON.message) {
+                        errorMessage = response.responseJSON.message;
+                    }
+                    showAlert(errorMessage, 'danger');
+                }
+            });
+        });
+
+        $('.vote-btn').click(function (e) {
+            e.preventDefault();
+            var form = $(this).closest('form');
+            var url = form.attr('action');
+            $.ajax({
+                type: 'PUT',
+                url: url,
+                success: function () {
+                    localStorage.setItem('alertMessage', 'Voto registrado com sucesso');
+                    localStorage.setItem('alertType', 'success');
+                    location.reload();
+                },
+                error: function (response) {
+                    let errorMessage = 'An unknown error occurred';
+                    if (response.responseJSON && response.responseJSON.message) {
+                        errorMessage = response.responseJSON.message;
+                    }
+                    showAlert(errorMessage, 'danger');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
