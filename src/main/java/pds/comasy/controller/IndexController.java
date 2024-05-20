@@ -1,21 +1,13 @@
 package pds.comasy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.dto.ResidentDto;
-import pds.comasy.dto.UserAuthenticationDto;
 import pds.comasy.dto.VisitorDto;
-import pds.comasy.entity.Resident;
 import pds.comasy.entity.Visitor;
 import pds.comasy.enums.EnumRole;
 import pds.comasy.enums.EnumTypeVisitor;
@@ -26,7 +18,6 @@ import pds.comasy.service.VisitorService;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/comasy")
@@ -41,6 +32,16 @@ public class IndexController {
     @Autowired
     private ResidentService residentService;
 
+    @GetMapping(value = "/login")
+    public ModelAndView login() {
+        return new ModelAndView("login");
+    }
+
+    @GetMapping(value = "/logout")
+    public ModelAndView logout() {
+        return new ModelAndView("login");
+    }
+
     @GetMapping("/resident/form")
     public ModelAndView residentForm() {
         ModelAndView modelAndView = new ModelAndView();
@@ -54,6 +55,7 @@ public class IndexController {
 
         return modelAndView;
     }
+
     @GetMapping("/visitor/form")
     public ModelAndView visitorForm() {
         ModelAndView modelAndView = new ModelAndView();
@@ -94,28 +96,16 @@ public class IndexController {
         return modelAndView;
     }
 
-    /*@GetMapping("/delivery/form")
-    public ModelAndView deliveryForm() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("reception/form");
-
-        List<ResidentDto> residents = residentService.getAllResidents();
-        modelAndView.addObject("residents", residents);
-
-        return modelAndView;
-    }*/
-
     @GetMapping("/reception")
-    public ModelAndView receptionMenu() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("reception/view");
-
+    public ModelAndView reception() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("reception/view");
         List<Visitor> visitors = visitorService.getAllVisitors();
-        modelAndView.addObject("visitors", visitors);
-
         List<ResidentDto> residents = residentService.getAllResidents();
-        modelAndView.addObject("residents", residents);
 
-        return modelAndView;
+        model.addObject("visitors", visitors);
+        model.addObject("residents", residents);
+
+        return model;
     }
 }

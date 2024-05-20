@@ -2,11 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div class="container">
+<div class="container mt-5">
+    <div id="alertContainer"></div>
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
             <div class="card">
@@ -14,7 +16,7 @@
                     <h3 class="text-center">Login</h3>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/login}" method="post">
+                    <form id="loginForm">
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
@@ -23,7 +25,7 @@
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        <button type="button" class="btn btn-primary btn-block" id="loginButton">Login</button>
                     </form>
                 </div>
             </div>
@@ -33,5 +35,41 @@
 
 <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.5.0/js/bootstrap.min.js}"></script>
+<script>
+    $(document).ready(function() {
+        $('#loginButton').click(function() {
+            var username = $('#username').val();
+            var password = $('#password').val();
+
+            $.ajax({
+                url: '/auth/login',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({username: username, password: password}),
+                success: function() {
+                    showAlert('Login successful');
+                    window.location.href = '/comasy/reception';
+                },
+                error: function(xhr, status, error) {
+                    showAlert('Invalid username or password', 'danger');
+                }
+            });
+        });
+    });
+
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertClass = 'alert-' + type;
+        const alert = `
+            <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+        alertContainer.innerHTML = alert;
+    }
+</script>
 </body>
 </html>

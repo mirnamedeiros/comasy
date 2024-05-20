@@ -1,9 +1,9 @@
 package pds.comasy.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import pds.comasy.entity.UserAuthentication;
 import pds.comasy.repository.UserAuthenticationRepository;
 
 @Service
@@ -16,7 +16,11 @@ public class AuthorizationService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userAuthenticationRepository.findByUsername(username);
+    public UserAuthentication loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserAuthentication user = userAuthenticationRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return user;
     }
 }

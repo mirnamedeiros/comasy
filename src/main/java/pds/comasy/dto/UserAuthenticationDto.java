@@ -14,4 +14,6 @@ public class UserAuthenticationDto {
     String username;
 
     String password;
+
+    String role;
 }

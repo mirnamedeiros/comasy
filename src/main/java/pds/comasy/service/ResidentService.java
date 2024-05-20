@@ -2,6 +2,7 @@ package pds.comasy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pds.comasy.config.SecurityConfiguration;
@@ -9,6 +10,7 @@ import pds.comasy.dto.ResidentDto;
 import pds.comasy.entity.Resident;
 import pds.comasy.mapper.ResidentMapper;
 import pds.comasy.repository.ResidentRepository;
+import pds.comasy.repository.UserAuthenticationRepository;
 
 import java.util.List;
 
@@ -20,6 +22,9 @@ public class ResidentService {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    UserAuthenticationRepository userAuthenticationRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -37,6 +42,14 @@ public class ResidentService {
             personService.createPerson(residentDto.getPerson());
         } else {
             throw new Exception("Resident already exists");
+        }
+
+        if (userAuthenticationRepository.findByUsername(residentDto.getUserAuthentication().getUsername()) != null) {
+            throw new Exception("User or password already exists");
+        } else {
+            String encryptedPassword = new BCryptPasswordEncoder().encode(residentDto.getUserAuthentication().getPassword());
+            residentDto.getUserAuthentication().setPassword(encryptedPassword);
+            userAuthenticationRepository.save(residentDto.getUserAuthentication());
         }
 
         Resident savedResident = residentRepository.save(ResidentMapper.mapToResident(residentDto));
@@ -76,13 +89,4 @@ public class ResidentService {
 
         residentRepository.delete(resident);
     }
-
-//    private void validateRole(RoleDto roleDto) throws Exception {
-//        if (roleDto == null || roleDto.getId() == null) {
-//            throw new Exception("Role is required");
-//        }
-
-//         Implemente a lógica de validação necessária, por exemplo:
-//         Verificar se o papel é um dos papéis permitidos no sistema
-//    }
 }

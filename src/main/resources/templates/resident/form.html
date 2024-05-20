@@ -53,22 +53,22 @@
             <div class="col-md-6">
                 <div class="mb-3 form-group">
                     <label for="input-username">Usuário</label>
-                    <input type="text" class="form-control" id="input-username" name="authentication.username">
+                    <input type="text" class="form-control" id="input-username" name="userAuthentication.username">
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="mb-3 form-group">
                     <label for="input-password">Senha</label>
-                    <input type="password" class="form-control" id="input-password" name="authentication.password">
+                    <input type="password" class="form-control" id="input-password" name="userAuthentication.password">
                 </div>
             </div>
         </div>
 
             <div class="mb-3 form-group">
                 <label for="input-role">Selecione o Papel</label>
-                <select class="form-select" id="input-role" name="role">
-                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                <select class="form-select" id="input-role" name="userAuthentication.role">
+                    <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
                 </select>
             </div>
 
@@ -94,7 +94,7 @@
                 phoneNumber: []
             },
             apartmentNumber: null,
-            role: null
+            userAuthentication: {}
         };
 
         formData.forEach(function (value, key) {
@@ -107,8 +107,9 @@
                 }
             } else if (key === 'apartmentNumber') {
                 residentDto.apartmentNumber = value;
-            } else if (key === 'role') {
-                residentDto.role = value;
+            } else if (key.startsWith('userAuthentication.')) {
+                var authKey = key.substring(19);
+                residentDto.userAuthentication[authKey] = value;
             } else {
                 residentDto[key] = value;
             }

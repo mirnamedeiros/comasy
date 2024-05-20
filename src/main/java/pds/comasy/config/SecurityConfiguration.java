@@ -27,13 +27,16 @@ public class SecurityConfiguration {
         return  httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/comasy/reception").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/comasy/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/comasy/reception").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/comasy/resident/**").authenticated()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
