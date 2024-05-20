@@ -82,10 +82,19 @@
 
         <button type="button" onclick="submitForm()" class="btn btn-primary">Cadastrar Residente</button>
     </form>
+    <div id="message-container"></div>
 </div>
 <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.5.0/js/bootstrap.min.js}"></script>
-<script>
+<script type="text/javascript">
+    function showMessage(message, type) {
+        document.getElementById('message-container').innerHTML = '<div class="alert alert-' + type + '">' + message + '</div>';
+
+        setTimeout(() => {
+            document.getElementById('message-container').innerHTML = '';
+        }, 5000);
+    }
+
     function submitForm() {
         var form = $('#residentForm')[0];
         var formData = new FormData(form);
@@ -120,22 +129,22 @@
         $.ajax({
             type: "POST",
             contentType: "application/json",
-            url: "/api/residents",
+            url: "/resident",
             data: JSON.stringify(residentDto),
             dataType: 'json',
             success: function (data) {
-                console.log('Resident created successfully:', data);
+                showMessage('Residente criado com sucesso', 'success');
             },
             error: function (error) {
-                console.error('Error creating resident:', error);
+                console.log(error.responseJSON.errors);
+                showMessage('Erro ao criar residente: ' + error.responseJSON.errors, 'danger');
             }
         });
     }
 
-
     $(document).ready(function () {
         $("#add-phone").click(function () {
-            $("#phone-inputs").append('<div class="mb-3"><input type="text" name="person.phoneNumber" class="form-control mb-2 phone-input" placeholder="Telefone"><button type="button" class="btn btn-danger remove-phone">Remover Telefone</button></div>');
+            $("#phone-inputs").append('<div class="col-sm-4"><input type="text" name="person.phoneNumber" class="form-control mb-2 phone-input" placeholder="Telefone"><button type="button" class="btn btn-danger remove-phone">Remover Telefone</button></div>');
         });
 
         $(document).on("click", ".remove-phone", function () {

@@ -3,6 +3,7 @@ package pds.comasy.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import pds.comasy.entity.Condominium;
 
 @Getter
 @Data
@@ -16,6 +17,8 @@ public class ApartmentDto {
     private String block;
 
     private String residentOwnerCpf;
+
+    private Condominium condominium;
 
     public ApartmentDto(){}
 }

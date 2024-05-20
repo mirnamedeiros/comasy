@@ -11,20 +11,44 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import pds.comasy.dto.ResidentDto;
 import pds.comasy.entity.Delivery;
 import pds.comasy.entity.NotificationVisitor;
+import pds.comasy.entity.Visitor;
 import pds.comasy.service.ReceptionService;
+import pds.comasy.service.ResidentService;
+import pds.comasy.service.VisitorService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reception")
+@RequestMapping("/reception")
 public class ReceptionController {
 
     @Autowired
     private ReceptionService receptionService;
+
+    @Autowired
+    private VisitorService visitorService;
+
+    @Autowired
+    private ResidentService residentService;
+
+    @GetMapping("/view")
+    public ModelAndView reception() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("reception/view");
+        List<Visitor> visitors = visitorService.getAllVisitors();
+        List<ResidentDto> residents = residentService.getAllResidents();
+
+        model.addObject("visitors", visitors);
+        model.addObject("residents", residents);
+
+        return model;
+    }
 
     @PostMapping("/delivery")
     public ResponseEntity<Delivery> createDelivery(@RequestBody Delivery delivery) {

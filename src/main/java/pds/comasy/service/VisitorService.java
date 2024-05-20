@@ -1,10 +1,12 @@
 package pds.comasy.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import pds.comasy.dto.PersonDto;
 import pds.comasy.dto.VisitorDto;
 import pds.comasy.entity.Visitor;
+import pds.comasy.exceptions.EntityAlreadyExistsException;
+import pds.comasy.exceptions.EntitySaveFailureException;
+import pds.comasy.exceptions.NotFoundException;
 import pds.comasy.mapper.PersonMapper;
 import pds.comasy.mapper.VisitorMapper;
 import pds.comasy.repository.VisitorRepository;
@@ -28,16 +30,16 @@ public class VisitorService {
         return visitorRepository.findAll();
     }
 
-    public VisitorDto getVisitorById(Long id) throws Exception {
+    public VisitorDto getVisitorById(Long id) throws NotFoundException {
         Visitor visitor = visitorRepository.findById(id)
-                .orElseThrow(() -> new Exception("Visitant not found"));
+                .orElseThrow(() -> new NotFoundException("Visitant not found"));
         return VisitorMapper.mapToVisitorDto(visitor);
     }
 
-    public VisitorDto createVisitor(VisitorDto visitorDto) throws Exception {
+    public VisitorDto createVisitor(VisitorDto visitorDto) throws EntityAlreadyExistsException, EntitySaveFailureException {
         try {
             if (visitorDto.getId() != null && visitorRepository.existsById(visitorDto.getId())) {
-                throw new Exception("Visitor already exists.");
+                throw new EntityAlreadyExistsException("Visitor already exists.");
             }
 
             if (!personService.personExists(visitorDto.getPerson().getCpf())) {
@@ -46,16 +48,19 @@ public class VisitorService {
 
             String qrCodeText = VisitorMapper.generateQRCodeText(visitorDto.getPerson());
             visitorDto.setQrCode(qrCodeText);
+            System.out.println(visitorDto.getQrCode());
             Visitor savedVisitor = visitorRepository.save(VisitorMapper.mapToVisitor(visitorDto));
+            System.out.println(savedVisitor.getQrCode());
             return VisitorMapper.mapToVisitorDto(savedVisitor);
         } catch (Exception e) {
-            throw new Exception("Failed to save visitor");
+            System.out.println(e.getMessage());
+            throw new EntitySaveFailureException("Failed to save visitor");
         }
     }
 
-    public VisitorDto updateVisitor(Long id, VisitorDto visitorDto) throws Exception {
+    public VisitorDto updateVisitor(Long id, VisitorDto visitorDto) throws NotFoundException {
         Visitor visitor = visitorRepository.findById(id)
-                .orElseThrow(() -> new Exception("Visitor not found"));
+                .orElseThrow(() -> new NotFoundException("Visitor not found"));
 
         Visitor updatedVisitor = VisitorMapper.mapToVisitor(visitorDto);
         updatedVisitor.setId(visitor.getId());
@@ -67,10 +72,10 @@ public class VisitorService {
         return VisitorMapper.mapToVisitorDto(savedUpdatedVisitor);
     }
 
-    public void deleteVisitor(Long id) throws Exception {
+    public void deleteVisitor(Long id) throws NotFoundException {
         // Check if visitor exists
         if (!visitorRepository.existsById(id)) {
-            throw new Exception("Visitor not found");
+            throw new NotFoundException("Visitor not found");
         }
         visitorRepository.deleteById(id);
     }

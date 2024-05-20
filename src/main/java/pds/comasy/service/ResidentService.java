@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pds.comasy.config.SecurityConfiguration;
 import pds.comasy.dto.ResidentDto;
 import pds.comasy.entity.Resident;
+import pds.comasy.exceptions.EntityAlreadyExistsException;
+import pds.comasy.exceptions.FailedToDeleteException;
+import pds.comasy.exceptions.NotFoundException;
 import pds.comasy.mapper.ResidentMapper;
 import pds.comasy.repository.ResidentRepository;
 import pds.comasy.repository.UserAuthenticationRepository;
@@ -37,11 +40,10 @@ public class ResidentService {
 
     @Transactional
     public ResidentDto createResident(ResidentDto residentDto) throws Exception {
-
         if (!personService.personExists(residentDto.getPerson().getCpf())) {
             personService.createPerson(residentDto.getPerson());
         } else {
-            throw new Exception("Resident already exists");
+            throw new EntityAlreadyExistsException("Resident already exists");
         }
 
         if (userAuthenticationRepository.findByUsername(residentDto.getUserAuthentication().getUsername()) != null) {
@@ -58,9 +60,9 @@ public class ResidentService {
     }
 
     @Transactional(readOnly = true)
-    public ResidentDto getResidentById(Long id) throws Exception {
+    public ResidentDto getResidentById(Long id) throws NotFoundException {
         Resident resident = residentRepository.findById(id)
-            .orElseThrow(() -> new Exception("Resident not found"));
+            .orElseThrow(() -> new NotFoundException("Resident not found"));
 
         return ResidentMapper.mapToResidentDto(resident);
     }
@@ -72,9 +74,9 @@ public class ResidentService {
     }
 
     @Transactional
-    public ResidentDto updateResident(Long id, ResidentDto residentDto) throws Exception {
+    public ResidentDto updateResident(Long id, ResidentDto residentDto) throws NotFoundException {
         Resident existingResident = residentRepository.findById(id)
-            .orElseThrow(() -> new Exception("Resident not found"));
+            .orElseThrow(() -> new NotFoundException("Resident not found"));
         Resident updatedResident = ResidentMapper.mapToResident(residentDto);
         updatedResident.setId(existingResident.getId());
 
@@ -83,9 +85,9 @@ public class ResidentService {
     }
 
     @Transactional
-    public void deleteResident(Long id) throws Exception {
+    public void deleteResident(Long id) throws FailedToDeleteException {
         Resident resident = residentRepository.findById(id)
-                .orElseThrow(() -> new Exception("Resident not found"));
+                .orElseThrow(() -> new FailedToDeleteException("Resident not found"));
 
         residentRepository.delete(resident);
     }

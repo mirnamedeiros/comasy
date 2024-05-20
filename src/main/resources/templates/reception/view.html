@@ -7,7 +7,7 @@
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div th:insert="../static/fragments/nav-bar :: nav"></div>
+<div th:insert="~{../static/fragments/nav-bar :: nav}"></div>
 <div class="container mt-5">
     <div id="alertContainer"></div>
     <div class="row mt-4 card" sec:authorize="hasRole('RESIDENT')">
@@ -117,7 +117,7 @@
 
         var visitorId = $('#visitor').val();
 
-        $.get('/api/visitor/' + visitorId, function(visitor) {
+        $.get('/visitor/' + visitorId, function(visitor) {
             var nVisitor = {
                 visitor: visitor,
                 time: new Date(),
@@ -126,7 +126,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/api/reception/notification',
+                url: '/reception/notification',
                 contentType: 'application/json',
                 data: JSON.stringify(nVisitor),
                 success: function () {
@@ -153,7 +153,7 @@
 
         $.ajax({
             type: 'POST',
-            url: '/api/reception/delivery',
+            url: '/reception/delivery',
             contentType: 'application/json',
             data: JSON.stringify(nDelivery),
             success: function () {
@@ -171,7 +171,7 @@
     });
 
     function loadPendingDeliveries() {
-        $.get('/api/reception/pending-deliveries', function(deliveries) {
+        $.get('/reception/pending-deliveries', function(deliveries) {
             var tbody = $('#pending-deliveries-body');
             tbody.empty();
             $.each(deliveries, function(index, delivery) {
@@ -185,12 +185,12 @@
     }
 
     function confirmDelivery(deliveryId) {
-        $.get('/api/reception/delivery/' + deliveryId, function(delivery) {
+        $.get('/reception/delivery/' + deliveryId, function(delivery) {
             if (delivery) {
                 delivery.delivered = true;
                 $.ajax({
                     type: 'PUT',
-                    url: '/api/reception/delivery/' + deliveryId,
+                    url: '/reception/delivery/' + deliveryId,
                     contentType: 'application/json',
                     data: JSON.stringify(delivery),
                     success: function () {
@@ -211,7 +211,7 @@
     });
 
     function loadPendingNotifications() {
-        $.get('/api/reception/pending-notifications', function(notifications) {
+        $.get('/reception/pending-notifications', function(notifications) {
             var tbody = $('#pending-notifications-body');
             tbody.empty();
             $.each(notifications, function(index, notification) {
@@ -231,7 +231,7 @@
     function authorizeNotification(notificationNumber) {
         $.ajax({
             type: 'PUT',
-            url: '/api/reception/notification/' + notificationNumber + '/authorize',
+            url: '/reception/notification/' + notificationNumber + '/authorize',
             contentType: 'application/json',
             success: function () {
                 showAlert(messages.notification.success);
@@ -255,7 +255,7 @@
     function verifyQRCode(qrCodeText) {
         $.ajax({
             type: 'POST',
-            url: '/api/visitor/verify',
+            url: '/visitor/verify',
             data: JSON.stringify({ qrCodeText: qrCodeText }),
             success: function (response) {
                 if (response.valid) {
@@ -274,7 +274,7 @@
         console.log(texto);
         $.ajax({
             type: 'GET',
-            url: '/api/visitor/generate',
+            url: '/visitor/generate',
             data: { text: texto },
             success: function(data) {
                 var imagem = 'data:image/png;base64,' + data;

@@ -22,19 +22,16 @@ public class PersonController {
         this.personService = personService;
     }
 
-    //CREATE PERSON
     @PostMapping
     public ResponseEntity<PersonDto> addPerson(@RequestBody PersonDto personDto) throws Exception {
         return new ResponseEntity<>(personService.createPerson(personDto), HttpStatus.CREATED);
     }
 
-    //GET PERSON
     @GetMapping("/{cpf}")
     public ResponseEntity<PersonDto> getPersonByCpf(@PathVariable String cpf) throws Exception {
         return ResponseEntity.ok(personService.getPersonByCpf(cpf));
     }
 
-    // UPDATE PERSON
     @PutMapping("/{cpf}")
     public ResponseEntity<PersonDto> updatePerson(@PathVariable String cpf, @RequestBody PersonDto personDto) throws Exception {
         personDto.setCpf(cpf);

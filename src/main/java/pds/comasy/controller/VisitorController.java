@@ -1,12 +1,9 @@
 package pds.comasy.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,16 +13,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.dto.VisitorDto;
+import pds.comasy.enums.EnumTypeVisitor;
 import pds.comasy.service.QrCodeService;
 import pds.comasy.service.VisitorService;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/visitor")
+@RequestMapping("/visitor")
 public class VisitorController {
 
     @Autowired
@@ -33,6 +34,45 @@ public class VisitorController {
 
     @Autowired
     private QrCodeService qrCodeService;
+
+    @GetMapping("/form")
+    public ModelAndView visitorForm() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("visitor/form");
+
+        VisitorDto visitorDto = new VisitorDto();
+        modelAndView.addObject("visitorDto", visitorDto);
+
+        List<EnumTypeVisitor> types = Arrays.asList(EnumTypeVisitor.values());
+        modelAndView.addObject("types", types);
+
+        return modelAndView;
+    }
+
+    @GetMapping("/qrCode/{id}")
+    public ModelAndView visitorPage(@PathVariable Long id) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("visitor/view");
+
+        try {
+            VisitorDto visitor = visitorService.getVisitorById(id);
+            if (visitor != null) {
+                modelAndView.addObject("visitor", visitor);
+
+                byte[] qrCodeImage = qrCodeService.generateQRCode(visitor.getQrCode(), 200, 200);
+                String qrCodeImageData = Base64.getEncoder().encodeToString(qrCodeImage);
+                modelAndView.addObject("qrCodeImage", qrCodeImageData);
+                modelAndView.addObject("qrCodeText", visitor.getQrCode());
+            } else {
+                modelAndView.addObject("visitor", null);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            modelAndView.addObject("visitor", null);
+        }
+
+        return modelAndView;
+    }
 
     @PostMapping
     public ResponseEntity<VisitorDto> createVisitor(@RequestBody VisitorDto visitorDto) {

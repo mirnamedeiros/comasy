@@ -48,7 +48,7 @@
                 data: JSON.stringify({username: username, password: password}),
                 success: function() {
                     showAlert('Login successful');
-                    window.location.href = '/comasy/reception';
+                    window.location.href = '/reception/view';
                 },
                 error: function(xhr, status, error) {
                     showAlert('Invalid username or password', 'danger');

@@ -10,17 +10,36 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.dto.ResidentDto;
+import pds.comasy.enums.EnumRole;
 import pds.comasy.service.ResidentService;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/residents")
+@RequestMapping("/resident")
 public class ResidentController {
 
     private final ResidentService residentService;
 
     public ResidentController(ResidentService residentService) {
         this.residentService = residentService;
+    }
+
+    @GetMapping("/form")
+    public ModelAndView residentForm() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("resident/form");
+
+        ResidentDto residentDto = new ResidentDto();
+        modelAndView.addObject("residentDto", residentDto);
+
+        List<EnumRole> roles = Arrays.asList(EnumRole.values());
+        modelAndView.addObject("roles", roles);
+
+        return modelAndView;
     }
 
     @PostMapping

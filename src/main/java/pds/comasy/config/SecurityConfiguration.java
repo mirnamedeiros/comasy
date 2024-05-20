@@ -31,10 +31,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/comasy/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/comasy/reception").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/comasy/resident/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/reception").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/resident/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .build();

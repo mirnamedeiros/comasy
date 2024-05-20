@@ -7,7 +7,7 @@
         <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
     </head>
     <body>
-    <div th:insert="../static/fragments/nav-bar :: nav"></div>
+    <div th:insert="~{../static/fragments/nav-bar :: nav}"></div>
     <div class="container">
         <h1 class="mt-5">Visitor QR Code</h1>
         <div th:if="${visitor != null}">
@@ -27,7 +27,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/api/visitor/verify",
+                url: "/visitor/verify",
                 data: JSON.stringify({ qrCodeText: qrCodeText }),
                 contentType: "application/json",
                 success: function (response) {
