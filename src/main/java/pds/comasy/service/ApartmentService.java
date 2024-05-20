@@ -7,6 +7,7 @@ import pds.comasy.dto.ApartmentDto;
 import pds.comasy.entity.Apartment;
 import pds.comasy.exceptions.EntityAlreadyExistsException;
 import pds.comasy.exceptions.InvalidFieldException;
+import pds.comasy.exceptions.NotFoundException;
 import pds.comasy.mapper.ApartmentMapper;
 import pds.comasy.repository.ApartmentRepository;
 
@@ -31,13 +32,13 @@ public class ApartmentService {
         return apartmentDtoList;
     }
 
-    public void deleteApartment(Long id) throws Exception {
-        Apartment apartment = apartmentRepository.findById(id).orElseThrow(() -> new Exception("Apartment not found"));
+    public void deleteApartment(Long id) throws NotFoundException {
+        Apartment apartment = apartmentRepository.findById(id).orElseThrow(() -> new NotFoundException("Apartment not found"));
         apartmentRepository.deleteById(id);
     }
 
-    public ApartmentDto updateApartment(Long id, ApartmentDto apartmentDto) throws Exception {
-        Apartment existingApartment = apartmentRepository.findById(id).orElseThrow(() -> new Exception("Apartment not found"));
+    public ApartmentDto updateApartment(Long id, ApartmentDto apartmentDto) throws NotFoundException {
+        Apartment existingApartment = apartmentRepository.findById(id).orElseThrow(() -> new NotFoundException("Apartment not found"));
         Apartment updateApartment = ApartmentMapper.mapToApartment(apartmentDto);
         updateApartment.setId(existingApartment.getId());
 
@@ -51,15 +52,15 @@ public class ApartmentService {
         }
 
         if(apartmentDto.getBlock() == null || apartmentDto.getBlock().isEmpty()) {
-           throw new InvalidFieldException("Erro no campo bloco");
+           throw new InvalidFieldException("O campo bloco não pode ser nulo ou vazio");
         }
 
         if(apartmentDto.getNumber() <= 0) {
-            throw new InvalidFieldException("Erro no campo número");
+            throw new InvalidFieldException("O campo número não pode ser negativo ou igual a zero");
         }
 
         if(apartmentDto.getResidentOwnerCpf() == null || apartmentDto.getResidentOwnerCpf().isEmpty()) {
-            throw new InvalidFieldException("Erro no campo cpf");
+            throw new InvalidFieldException("O campo CPF não pode ser nulo ou vazio");
         }
     }
 

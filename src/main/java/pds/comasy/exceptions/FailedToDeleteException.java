@@ -3,7 +3,7 @@ package pds.comasy.exceptions;
 public class FailedToDeleteException extends Exception {
 
     public FailedToDeleteException() {
-        super("Falha ao excluir a entidade.");
+        super("Failed to delete entity.");
     }
 
     public FailedToDeleteException(String message) {

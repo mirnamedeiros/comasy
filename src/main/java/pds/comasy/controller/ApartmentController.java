@@ -1,6 +1,7 @@
 package pds.comasy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import pds.comasy.dto.CondominiumDto;
 import pds.comasy.entity.Condominium;
 import pds.comasy.exceptions.EntityAlreadyExistsException;
 import pds.comasy.exceptions.InvalidFieldException;
+import pds.comasy.exceptions.NotFoundException;
 import pds.comasy.mapper.CondominiumMapper;
 import pds.comasy.repository.CondominiumRepository;
 import pds.comasy.service.ApartmentService;
@@ -56,13 +58,13 @@ public class ApartmentController {
             Condominium condominium = (condominiumRepository.getById(condominiumId));
             apartmentDto.setCondominium(condominium);
             apartmentService.createdApartment(apartmentDto);
-            modelAndView.addObject("msg", "Apartamento cadastrado com sucesso!");
+            modelAndView.addObject("msg", "Apartment registered successfully!");
         } catch (EntityAlreadyExistsException e) {
             modelAndView.addObject("msg", e.getMessage());
         } catch (InvalidFieldException e) {
             modelAndView.addObject("msg", e.getMessage());
         } catch (Exception e) {
-            modelAndView.addObject("msg", "Ocorreu um erro ao cadastrar o apartamento.");
+            modelAndView.addObject("msg", "An error occurred when trying to register the apartment.");
         }
         return modelAndView;
     }
@@ -74,8 +76,12 @@ public class ApartmentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteApartment(@PathVariable Long id) throws Exception {
-        apartmentService.deleteApartment(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteApartment(@PathVariable Long id) {
+       try {
+           apartmentService.deleteApartment(id);
+           return ResponseEntity.noContent().build();
+       } catch (NotFoundException e) {
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+       }
     }
 }

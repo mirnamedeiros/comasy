@@ -1,5 +1,6 @@
 package pds.comasy.service;
 
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import pds.comasy.entity.Condominium;
 import pds.comasy.entity.Person;
 import pds.comasy.entity.Resident;
 import pds.comasy.exceptions.InvalidFieldException;
+import pds.comasy.exceptions.NotFoundException;
 import pds.comasy.mapper.CondominiumMapper;
 import pds.comasy.mapper.PersonMapper;
 import pds.comasy.repository.CondominiumRepository;
@@ -35,13 +37,13 @@ public class CondominiumService {
         return condominiumDtoList;
     }
 
-    public void deleteCondominium(Long id) throws Exception {
-        Condominium condominium = condominiumRepository.findById(id).orElseThrow(() -> new Exception("Condominiun not found"));
+    public void deleteCondominium(Long id) throws NotFoundException {
+        Condominium condominium = condominiumRepository.findById(id).orElseThrow(() -> new NotFoundException("Condominiun not found"));
         condominiumRepository.deleteById(id);
     }
 
-    public CondominiumDto updateCondominium(Long id, CondominiumDto condominiumDto) throws Exception {
-        Condominium existingCondominium = condominiumRepository.findById(id).orElseThrow(() -> new Exception("Condominium not found"));
+    public CondominiumDto updateCondominium(Long id, CondominiumDto condominiumDto) throws NotFoundException {
+        Condominium existingCondominium = condominiumRepository.findById(id).orElseThrow(() -> new NotFoundException("Condominium not found"));
         Condominium updateCondominium = CondominiumMapper.mapToCondominium(condominiumDto);
         updateCondominium.setId(existingCondominium.getId());
 
