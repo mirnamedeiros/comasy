@@ -50,8 +50,12 @@
                     showAlert('Login successful');
                     window.location.href = '/reception/view';
                 },
-                error: function(xhr, status, error) {
-                    showAlert('Invalid username or password', 'danger');
+                error: function(response) {
+                    let errorMessage = 'An unknown error occurred';
+                    if (response.responseJSON && response.responseJSON.message) {
+                        errorMessage = response.responseJSON.message;
+                    }
+                    showAlert(errorMessage, 'danger');
                 }
             });
         });
