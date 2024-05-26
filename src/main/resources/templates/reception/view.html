@@ -134,8 +134,12 @@
                     showAlert(messages.notification.success);
                     loadPendingNotifications();
                 },
-                error: function () {
-                    showAlert(messages.notification.error, 'danger');
+                error: function (response) {
+                    let errorMessage = 'An unknown error occurred';
+                    if (response.responseJSON && response.responseJSON.message) {
+                        errorMessage = response.responseJSON.message;
+                    }
+                    showAlert(errorMessage, 'danger');
                 }
             });
         });
@@ -144,8 +148,6 @@
     function notificationDelivery() {
         var arrivalDateValue = new Date($('#arrivalDate').val());
         arrivalDateValue.setDate(arrivalDateValue.getDate() + 1);
-        console.log(arrivalDateValue)
-
         var nDelivery = {
             residentId: $('#resident').val(),
             arrivalDate: arrivalDateValue,
@@ -154,15 +156,19 @@
 
         $.ajax({
             type: 'POST',
-            url: '/reception/delivery',
+            url: '/delivery',
             contentType: 'application/json',
             data: JSON.stringify(nDelivery),
             success: function () {
                 showAlert(messages.delivery.success);
                 loadPendingDeliveries();
             },
-            error: function () {
-                showAlert(messages.delivery.error, 'danger');
+            error: function (response) {
+                let errorMessage = 'An unknown error occurred';
+                if (response.responseJSON && response.responseJSON.message) {
+                    errorMessage = response.responseJSON.message;
+                }
+                showAlert(errorMessage, 'danger');
             }
         });
     }
@@ -172,7 +178,7 @@
     });
 
     function loadPendingDeliveries() {
-        $.get('/reception/pending-deliveries', function(deliveries) {
+        $.get('/delivery/pending', function(deliveries) {
             var tbody = $('#pending-deliveries-body');
             tbody.empty();
             $.each(deliveries, function(index, delivery) {
@@ -186,20 +192,24 @@
     }
 
     function confirmDelivery(deliveryId) {
-        $.get('/reception/delivery/' + deliveryId, function(delivery) {
+        $.get('/delivery/' + deliveryId, function(delivery) {
             if (delivery) {
                 delivery.delivered = true;
                 $.ajax({
                     type: 'PUT',
-                    url: '/reception/delivery/' + deliveryId,
+                    url: '/delivery/' + deliveryId,
                     contentType: 'application/json',
                     data: JSON.stringify(delivery),
                     success: function () {
                         showAlert(messages.deliveryConfirmation.success);
                         loadPendingDeliveries();
                     },
-                    error: function () {
-                        showAlert(messages.deliveryConfirmation.error, 'danger');
+                    error: function (response) {
+                        let errorMessage = 'An unknown error occurred';
+                        if (response.responseJSON && response.responseJSON.message) {
+                            errorMessage = response.responseJSON.message;
+                        }
+                        showAlert(errorMessage, 'danger');
                     }
                 });
             } else {
@@ -238,8 +248,12 @@
                 showAlert(messages.notification.success);
                 loadPendingNotifications();
             },
-            error: function () {
-                showAlert(messages.notification.error, 'danger');
+            error: function (reponse) {
+                let errorMessage = 'An unknown error occurred';
+                if (response.responseJSON && response.responseJSON.message) {
+                    errorMessage = response.responseJSON.message;
+                }
+                showAlert(errorMessage, 'danger');
             }
         });
     }
@@ -272,7 +286,6 @@
     }
 
     function gerarQRCode(texto) {
-        console.log(texto);
         $.ajax({
             type: 'GET',
             url: '/visitor/generate',
