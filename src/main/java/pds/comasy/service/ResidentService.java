@@ -1,11 +1,9 @@
 package pds.comasy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pds.comasy.config.SecurityConfiguration;
 import pds.comasy.dto.ResidentDto;
 import pds.comasy.entity.Resident;
 import pds.comasy.exceptions.EntityAlreadyExistsException;
@@ -28,15 +26,6 @@ public class ResidentService {
 
     @Autowired
     UserAuthenticationRepository userAuthenticationRepository;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private TokenService jwtTokenService;
-
-    @Autowired
-    private SecurityConfiguration securityConfiguration;
 
     @Transactional
     public ResidentDto createResident(ResidentDto residentDto) throws Exception {
