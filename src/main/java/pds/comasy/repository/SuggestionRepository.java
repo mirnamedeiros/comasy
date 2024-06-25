@@ -12,10 +12,13 @@ import java.util.List;
 @Repository
 public interface SuggestionRepository extends JpaRepository<Suggestion, Long> {
 
-    @Query("SELECT s FROM Suggestion s WHERE s.type = ?1 AND s.message = ?2 AND s.dataProposta = ?3 AND s.resident = ?4")
+    @Query("SELECT s FROM Suggestion s WHERE s.type = ?1 AND s.message = ?2 AND s.dataProposta = ?3")
     Suggestion findByTypeAndMessageAndDataPropostaAndResident(
-            String type, String message, Date dataProposta, Resident resident
+            String type, String message, Date dataProposta
     );
 
     List<Suggestion> findByActiveTrue();
+
+    @Query("DELETE FROM Suggestion s WHERE s.active = true")
+    void delete();
 }

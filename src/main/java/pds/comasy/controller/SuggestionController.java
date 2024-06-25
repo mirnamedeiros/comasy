@@ -4,14 +4,7 @@ import com.opencsv.exceptions.CsvException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import pds.comasy.entity.Suggestion;
 import pds.comasy.exceptions.EntitySaveFailureException;
@@ -50,10 +43,10 @@ public class SuggestionController {
     }
 
     @GetMapping("/list")
-    public ModelAndView getAllSuggestions() throws IOException, ParseException, CsvException, EntitySaveFailureException {
+    public ModelAndView getSuggestions(@RequestParam String entityType) {
+        List<Suggestion> suggestions = suggestionService.getSuggestions(entityType);
         ModelAndView model = new ModelAndView();
         model.setViewName("suggestion/list");
-        List<Suggestion> suggestions = suggestionService.getAllActiveSuggestions();
         model.addObject("suggestions", suggestions);
         return model;
     }

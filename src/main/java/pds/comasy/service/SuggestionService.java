@@ -7,9 +7,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import pds.comasy.entity.Resident;
 import pds.comasy.entity.Suggestion;
+import pds.comasy.entity.VotingSystem;
 import pds.comasy.exceptions.EntitySaveFailureException;
 import pds.comasy.exceptions.FailedToDeleteException;
 import pds.comasy.exceptions.NotFoundException;
+import pds.comasy.patterns.votingsStrategy.CategorizedSuggestionStrategy;
+import pds.comasy.patterns.votingsStrategy.RankedSuggestionStrategy;
+import pds.comasy.patterns.votingsStrategy.StandardSuggestionStrategy;
+import pds.comasy.patterns.votingsStrategy.SuggestionStrategy;
 import pds.comasy.repository.ResidentRepository;
 import pds.comasy.repository.SuggestionRepository;
 
@@ -24,11 +29,16 @@ import java.util.Optional;
 @Service
 public class SuggestionService {
 
-    @Autowired
-    private SuggestionRepository suggestionRepository;
+    private final SuggestionRepository suggestionRepository;
 
-    @Autowired
-    private ResidentRepository residentRepository;
+    private final ResidentRepository residentRepository;
+
+    public SuggestionService(SuggestionRepository suggestionRepository, ResidentRepository residentRepository) throws IOException, ParseException, EntitySaveFailureException, CsvException {
+        this.suggestionRepository = suggestionRepository;
+        this.residentRepository = residentRepository;
+        String filePath = "static/csv/ocorrencias.csv";
+        processCsv(filePath);
+    }
 
     public Suggestion createSuggestion(Suggestion suggestion) throws EntitySaveFailureException {
         try {
@@ -55,7 +65,7 @@ public class SuggestionService {
                 Resident resident = residentRepository.findById(residentId).orElse(null);
 
                 Suggestion existingSuggestion = suggestionRepository.findByTypeAndMessageAndDataPropostaAndResident(
-                        "Sugestão", mensagem, dataProposta, resident
+                        "Sugestão", mensagem, dataProposta
                 );
 
                 if (existingSuggestion == null) {
@@ -90,11 +100,17 @@ public class SuggestionService {
         return suggestionRepository.findById(id);
     }
 
-    public List<Suggestion> getAllActiveSuggestions() throws IOException, CsvException, ParseException, EntitySaveFailureException {
-        String filePath = "static/csv/ocorrencias.csv";
-        processCsv(filePath);
+    public List<Suggestion> getSuggestions(String entityType) {
+        List<Suggestion> suggestions = suggestionRepository.findByActiveTrue();
 
-        return suggestionRepository.findByActiveTrue();
+        SuggestionStrategy strategy = switch (entityType) {
+            case "condominium" -> new RankedSuggestionStrategy();
+            case "hostel" -> new CategorizedSuggestionStrategy();
+            default -> new StandardSuggestionStrategy();
+        };
+
+        VotingSystem votingSystem = new VotingSystem(strategy);
+        return votingSystem.getSuggestions(suggestions);
     }
 
     public Suggestion updateSuggestion(Long id, Suggestion suggestion) throws EntitySaveFailureException, NotFoundException {
